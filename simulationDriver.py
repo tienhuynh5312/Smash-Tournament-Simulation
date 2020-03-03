@@ -1,3 +1,7 @@
+# - Import modules
+from enviornment import *
+
+
 class SimulationDriver:
     """
     Class which drives the simulation of the smash tournament
@@ -26,9 +30,6 @@ class SimulationDriver:
     """
 
     def __init__(self):
-        # - Import modules
-        from enviornment import *
-
         """
         Initialize the simulation driver for stage 1 in the description.
         """
@@ -54,7 +55,7 @@ class SimulationDriver:
 
         # - TODO: place players
         self.__generate_players()
-        self.totalInitialPlayers = 0 # TODO: call method from player.py to get total players
+        self.totalInitialPlayers = 0  # TODO: call method from player.py to get total players
 
     def begin(self):
         self.__start_tournament()
