@@ -1,5 +1,7 @@
 # Smash-Tournament-Simulation
+![Build Status](https://github.com/tienhuynh5312/Smash-Tournament-Simulation/workflows/Python%20application/badge.svg)
 
+# Members
 Tien Huynh
 
 Jesse Yu
