@@ -67,8 +67,6 @@ class SimulationDriver:
         while True:
             # - Increase timeStamp by timeStep
             self.time_stamp = self.time_stamp + self.__time_step
-            self.time_stamp = self.time_stamp + self.__time_step
-
 
             # - Call a pair of player to the reporting station
             # - If they are here:
