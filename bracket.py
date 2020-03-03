@@ -28,3 +28,12 @@ class Bracket(object):
         LosersMatches = []
         # How do you determine if people should be given a bye?
         # How do you link matches to different indices?
+
+    def getMatch(self):
+        return
+
+    def reportMatch(self):
+        return
+
+    def isComplete(self):
+        return 
