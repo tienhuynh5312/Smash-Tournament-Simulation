@@ -1,5 +1,5 @@
 # Smash-Tournament-Simulation
-![Build Status](https://github.com/tienhuynh5312/Smash-Tournament-Simulation/workflows/Python%20application/badge.svg)
+![Python application](https://github.com/tienhuynh5312/Smash-Tournament-Simulation/workflows/Python%20application/badge.svg?branch=master)
 
 # Members
 Tien Huynh
