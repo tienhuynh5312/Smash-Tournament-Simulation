@@ -67,6 +67,8 @@ class SimulationDriver:
         while True:
             # - Increase timeStamp by timeStep
             self.time_stamp = self.time_stamp + self.__time_step
+            self.time_stamp = self.time_stamp + self.__time_step
+
 
             # - Call a pair of player to the reporting station
             # - If they are here:
@@ -78,8 +80,10 @@ class SimulationDriver:
 
             # if player just get eliminated, give them a staying time:
             # - if player.isRecentlyEliminated():
-            #       play.playAround()
-        pass
+            #       player.playAround()
+
+            # - TODO: condition to end the outermost while loop
+            break
 
     def __report_tournament(self):
         pass
