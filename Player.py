@@ -10,39 +10,36 @@ class Player:
         Player.total_players = Player.total_players + 1
         self.player_id = player_id
         self.walking_distance = 0
-        self.isWaiting = True
-        self.isPlaying = False
-        self.isRecentlyEliminated = False
+        self.is_waiting = True
+        self.is_playing = False
+        self.is_recently_eliminated = False
         self.current_location = (0, 0)
         self.destination_location = (0, 0)
 
-    def walk(self):
+    def walk(self, env=None):
+        from simulationDriver import SimulationDriver
         # - make the player walk toward the destination location
-        pass
+        steps = SimulationDriver.TIME_STEP
+        direction_vector = (self.destination_location[0] - self.current_location[0],
+                            self.destination_location[1] - self.current_location[1])
 
     def set_destination(self, location_tuple=(0, 0)):
         self.destination_location = location_tuple
 
     def eliminated(self):
         Player.total_eliminated_players = Player.total_eliminated_players + 1
-        self.isPlaying = False
-        self.isWaiting = False
-        self.isRecentlyEliminated = True
+        self.is_playing = False
+        self.is_waiting = False
+        self.is_recently_eliminated = True
 
     def move_random(self):
         pass
 
     def play_around(self):
-        import numpy as N
-        if self.isRecentlyEliminated:
+        import numpy as np
+        if self.is_recently_eliminated:
             # -  If recently eliminated, give the player random time to stick around
-            self.play_around_time = N.random.normal(30, 10)
+            self.play_around_time = np.random.normal(30, 10)  # - 30 mins * 60 seconds. std 10
         else:
             # - now let the player move around for fun.
             pass
-
-    def isWaiting(self):
-        return self.isWaiting
-
-    def isPlaying(self):
-        return self.isPlaying
