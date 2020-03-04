@@ -1,52 +1,60 @@
 '''
-Waiting Room environment class for Smash Tournamnet SimuwaitingGridion
-Representeed by a 48 x 48 grid
+Environment class for Smash Tournament Simulation
+Representeed by a 73 x 48 grid
 '''
 
 import numpy as N
 import random
 
-class waitingRoom {
+class Environment:
 
-waitingGrid = N.zeros((48, 48))
-boundaryGrid = N.zeros((50, 50))
+    def __init__(self):
 
-rows = len(waitingGrid)
-columns = len(waitingGrid[0])
+        #Game room is 24 x 48, waiting room is 48 x 48, + 1 for wall in the middle. 24 + 48 + 1 = 73
+        self.environmentGrid = N.zeros((73, 48))
+        self.boundaryGrid = N.zeros((75, 50))
+
+        self.rows = len(self.environmentGrid)
+        self.columns = len(self.environmentGrid[0])
 
 
-##Extends left boundary
-for i in range(rows): 
-    boundaryGrid[i + 1][0] = -1
+    def init_boundary(self):
+        ##Extends left boundary
+        for i in range(rows): 
+            self.boundaryGrid[i + 1][0] = -1
 
-#Extends right boundary
-for i in range(rows): 
-    boundaryGrid[i + 1][columns + 1] = -1
+        #Extends right boundary
+        for i in range(rows): 
+            self.boundaryGrid[i + 1][columns + 1] = -1
 
-#Extends top boundary
-boundaryGrid[0][1:-1] = -1
+        #Extends top boundary
+        self.boundaryGrid[0][1:-1] = -1
 
-#Extends bottom boundary 
-boundaryGrid[rows + 1][1:-1] = -1
+        #Extends bottom boundary 
+        self.boundaryGrid[rows + 1][1:-1] = -1
 
-#Extends Corners 
-boundaryGrid[0][0] = -1
-boundaryGrid[0][columns + 1] = -1
-boundaryGrid[rows + 1][columns + 1] = -1
-boundaryGrid[rows + 1][0]  = -1
+        #Extends Corners 
+        self.boundaryGrid[0][0] = -1
+        self.boundaryGrid[0][columns + 1] = -1
+        self.boundaryGrid[rows + 1][columns + 1] = -1
+        self.boundaryGrid[rows + 1][0]  = -1
 
-copyWaitGrid() {    #Copies all the values from waitingGrid into BoundaryGrid
-    #Copies original grid
-    for i in range(len(waitingGrid)):
-        boundaryGrid[i + 1][1:-1] = waitingGrid[i]
-}
 
-#Adds doors (changes boundary -1 to opening 0), can only exist in top row
-#doorInfo is list of tuples with door location (left side of door as index) and doorLength
-addDoors(list doorInfo) {
-    for i in range(len(doorInfo)):
-        for j in range(doorInfo[i][1]):
-            waitingGrid[0][j + doorInfo[i][0]] = 0
-}
+    def copyWaitGrid():    #Copies all the values from environmentGrid into BoundaryGrid
+        #Copies original grid
+        for i in range(len(self.environmentGrid)):
+            boundaryGrid[i + 1][1:-1] = self.environmentGrid[i]
 
-}
+
+    #Adds doors (changes boundary -1 to opening 0), can only exist in top row
+    #doorInfo is list of tuples with door location (left side of door as index) and doorLength
+    def addDoors(list doorInfo):
+        for i in range(len(doorInfo)):
+            for j in range(doorInfo[i][1]):
+                self.environmentGrid[0][j + doorInfo[i][0]] = 0
+
+
+    def addBooth(int coord):
+
+
+
