@@ -1,5 +1,6 @@
 # - Import modules
-from enviornment import *
+from environment import *
+from player import *
 
 
 class SimulationDriver:
@@ -33,6 +34,7 @@ class SimulationDriver:
         """
         Initialize the simulation driver for stage 1 in the description.
         """
+        self.total_initial_players = 30
         self.console_rental_fee_per_hour = 10  # dollars
         self.player_admission_profit = 3  # dollars
         self.time_stamp = 0
@@ -42,6 +44,7 @@ class SimulationDriver:
 
         # - Create environment.
         # - TODO: after creating the environment class.
+        env = None
         self.__generate_environment()
 
         # - TODO: place consoles
@@ -55,13 +58,13 @@ class SimulationDriver:
 
         # - TODO: place players
         self.__generate_players()
-        self.totalInitialPlayers = 0  # TODO: call method from player.py to get total players
 
     def begin(self):
         self.__start_tournament()
         self.__report_tournament()
 
     def __start_tournament(self):
+        import numpy as N
         # - TODO: Run the tournament
 
         while True:
@@ -87,21 +90,24 @@ class SimulationDriver:
         pass
 
     def get_console_rental_fee(self):
-
         if self.time_stamp == 0:
             return 0
         else:
-            return self.timeStampt / 3600 * self.console_rental_fee_per_hour
+            return self.time_stamp / 3600 * self.console_rental_fee_per_hour
 
     def get_tournament_profit(self):
-        total_profit = self.totalInitialPlayers * self.player_admission_profit - self.get_console_rental_fee()
+        total_profit = self.total_initial_players * self.player_admission_profit - self.get_console_rental_fee()
         return total_profit
 
     def __generate_console_configuration(self):
         return 0
 
     def __generate_players(self):
-        return 0
+        self.players_list = {}
+        for i in range(self.total_initial_players):
+            self.players_list[i] = Player(player_id=i)
+            print(self.players_list[i])
+        # - Set the location of the player randomly
 
     def __generate_obstacles(self):
         pass
