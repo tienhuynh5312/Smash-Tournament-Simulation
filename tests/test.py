@@ -1,7 +1,8 @@
 import pytest
 
-from simulationDriver import *
-from environment import *
+from simulationDriver import SimulationDriver
+from environment import Environment
+from player import Player
 
 
 def test_1():
@@ -25,3 +26,12 @@ def test_3():
     assert x.env["organizers"].shape == (30, 30)
     assert x.env["consoles"].shape == (30, 30)
     assert x.env["players"].shape == (30, 30)
+
+
+def test_4():
+    Player.reset()
+    assert Player.total_eliminated_players == 0
+    assert Player.total_players == 0
+    x = Player(0)
+    y = Player(1)
+    assert Player.total_players == 2
