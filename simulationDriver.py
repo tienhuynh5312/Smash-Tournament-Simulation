@@ -38,12 +38,14 @@ class SimulationDriver:
     CONSOLE_AREA_ROWS = 24
     WALL_ROWS = 1
     ALL_AREA_COLS = 48
+    NUMBER_OF_CONSOLES = 10
+    TOTAL_PLAYER = 30
 
     def __init__(self):
         """
         Initialize the simulation driver for stage 1 in the description.
         """
-        self.total_initial_players = 30
+        self.total_initial_players = SimulationDriver.TOTAL_PLAYER
         self.console_rental_fee_per_hour = 10  # dollars
         self.player_admission_profit = 3  # dollars
         self.time_stamp = 0
@@ -75,7 +77,7 @@ class SimulationDriver:
         self.__report_tournament()
 
     def __start_tournament(self):
-        import numpy as N
+        import numpy as np
         # - TODO: Run the tournament
 
         while True:
@@ -117,7 +119,6 @@ class SimulationDriver:
         self.players_list = {}
         for i in range(self.total_initial_players):
             self.players_list[i] = Player(player_id=i)
-            print(self.players_list[i])
         # - Set the location of the player randomly
 
     def __generate_obstacles(self):
