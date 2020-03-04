@@ -1,6 +1,6 @@
 # - Import modules
-from environment import *
-from player import *
+from environment import Environment
+from player import Player
 
 
 class SimulationDriver:
@@ -29,6 +29,15 @@ class SimulationDriver:
     Return the amount of time that the tournament took and the net profit of the tournament.
 
     """
+    TIME_STEP = 4  # second
+    SIDE_LENGTH = 1  # ft
+    DOOR_LENGTH = 5
+    NUMBER_OF_DOORS = 4
+    WALL_ROW = 15  # which row we place the wall
+    WAITING_AREA_ROWS = 48
+    CONSOLE_AREA_ROWS = 24
+    WALL_ROWS = 1
+    ALL_AREA_COLS = 48
 
     def __init__(self):
         """
@@ -38,14 +47,15 @@ class SimulationDriver:
         self.console_rental_fee_per_hour = 10  # dollars
         self.player_admission_profit = 3  # dollars
         self.time_stamp = 0
-        self.__time_step = 5
+        self.__time_step = SimulationDriver.TIME_STEP
         self.console_rental_fee = self.get_console_rental_fee()  # $ per hour
         self.tournament_profit = self.get_tournament_profit()
 
         # - Create environment.
         # - TODO: after creating the environment class.
-        env = None
+        self.environment = None
         self.__generate_environment()
+        self.env = self.environment.env
 
         # - TODO: place consoles
         self.__generate_console_configuration()
@@ -60,6 +70,7 @@ class SimulationDriver:
         self.__generate_players()
 
     def begin(self):
+        """Begin the simulation"""
         self.__start_tournament()
         self.__report_tournament()
 
@@ -116,4 +127,6 @@ class SimulationDriver:
         pass
 
     def __generate_environment(self):
-        pass
+        self.environment = Environment(SimulationDriver.WAITING_AREA_ROWS +
+                                       SimulationDriver.CONSOLE_AREA_ROWS +
+                                       SimulationDriver.WALL_ROWS, SimulationDriver.ALL_AREA_COLS)
