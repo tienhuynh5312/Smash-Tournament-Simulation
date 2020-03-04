@@ -5,6 +5,11 @@ class Player:
     total_players = 0
     total_eliminated_players = 0
 
+    @staticmethod
+    def reset():
+        Player.total_players = 0
+        Player.total_eliminated_players = 0
+
     def __init__(self, player_id=0):
         self.play_around_time = 0
         Player.total_players = Player.total_players + 1
@@ -15,6 +20,10 @@ class Player:
         self.is_recently_eliminated = False
         self.current_location = (0, 0)
         self.destination_location = (0, 0)
+
+    def __del__(self):
+        Player.total_players = Player.total_players - 1
+        Player.total_eliminated_players = Player.total_eliminated_players - 1
 
     def walk(self, env=None):
         from simulationDriver import SimulationDriver
