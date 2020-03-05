@@ -45,22 +45,22 @@ class Bracket(object):
         for i in range(self.wExtra):
             p1 = self.numPlayers - i
             p2 = self.numPlayers - self.wExtra * 2 + i + 1
-            wp = [1, i // 2]
-            lp = [0, i // 2]
-            match = [p1, p2, wp, lp]
-            #match = Match(p1, p2)
+            wp = [0, 1, i // 2]
+            lp = [1, 0, i // 2]
+            #match = [p1, p2, wp, lp]
+            match = Match(wp, lp, p1, p2)
             WinnersRounds[0].append(match)
-            self.nextMatches.put((0, [0, i]))
+            self.nextMatches.put((0, [0, 0, i]))
 
         for i in range(1, self.numPlayers - self.wExtra * 2 + 1):
             p1 = i
             p2 = -1
-            wp = [1, (i + self.wExtra) // 2 - 1]
-            lp = [0, (i + self.wExtra) // 2 - 1]
-            match = [p1, p2, wp, lp]
-            #match = Match(wp, lp)
+            wp = [0, 1, (i + self.wExtra) // 2 - 1]
+            lp = [1, 0, (i + self.wExtra) // 2 - 1]
+            #match = [p1, p2, wp, lp]
+            match = Match(wp, lp, p1, p2)
             WinnersRounds[0].append(match)
-            self.nextMatches.put((0, [0, self.wExtra - 1 + i]))
+            self.nextMatches.put((0, [0, 0, self.wExtra - 1 + i]))
 
         # Create rounds 1 - k of matches
         for i in range(1, self.numRounds + 1):
@@ -83,7 +83,7 @@ class Bracket(object):
         for i in range(self.lExtra):
             p1 = "w" + str(2 * i)
             p2 = "w" + str(2 * i + 1)
-            wp = [1, i // 2]
+            wp = [0, 1, i // 2]
             lp = -1
             match = [wp, lp]
             LosersRounds[0].append(match)
@@ -113,11 +113,26 @@ class Bracket(object):
                 LosersRounds[i].append(match)
         return LosersRounds
 
-    def getMatch(self, type, round, matchNumber):
-        return
+    def getMatch(self, matchInfo):
+        type = matchInfo[0]
+        round = matchInfo[1]
+        matchNumber = matchInfo[2]
 
-    def reportMatch(self, type, round, matchNumber):
-        return
+        if (type == 0):
+            return self.WinnersRounds[round][matchNumber]
+        elif (type == 1):
+            return self.LosersRounds[round][matchNumber]
+
+    def reportMatch(self, matchInfo):
+        type = matchInfo[0]
+        round = matchInfo[1]
+        matchNumber = matchInfo[2]
+
+        if (type == 0):
+            match = self.WinnersRounds[round][matchNumber]
+        elif (type == 1):
+            match = self.LosersRounds[round][matchNumber]
+
 
     def isComplete(self):
         return self.numPlayers == 1
@@ -125,5 +140,14 @@ class Bracket(object):
 test = Bracket(7, 2)
 
 while (test.nextMatches):
-    match = test.nextMatches.get()
+    matchId = test.nextMatches.get()[1]
+    print(matchId)
+    match = test.getMatch(matchId)
     print(match)
+    match.updateResult(1)
+    print(match.getWinner())
+    print(match.getLoser())
+    wp = match.getwpath()
+    lp = match.getlpath()
+    print(wp)
+    print(lp)
