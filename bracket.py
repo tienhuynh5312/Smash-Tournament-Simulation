@@ -2,6 +2,8 @@
 Class designed to represent the double elmination format of tournaments 
 """
 
+from match import Match
+
 class Bracket(object):
     # Generate Bracket
     def __init__(self, numPlayers, b05round):
@@ -39,12 +41,21 @@ class Bracket(object):
 
         # Create round 0 of matches
         for i in range(self.wExtra):
-            #match = [self.numPlayers - i, self.numPlayers - self.wExtra * 2 + i + 1]
-            match = Match
+            p1 = self.numPlayers - i
+            p2 = self.numPlayers - self.wExtra * 2 + i + 1
+            wp = [1, i // 2]
+            lp = [0, i // 2]
+            match = [p1, p2, wp, lp]
+            #match = Match(p1, p2)
             WinnersRounds[0].append(match)
 
         for i in range(1, self.numPlayers - self.wExtra * 2 + 1):
-            match = [i, -1]
+            p1 = i
+            p2 = -1
+            wp = [1, (i + self.wExtra) // 2 - 1]
+            lp = [0, (i + self.wExtra) // 2 - 1]
+            match = [p1, p2, wp, lp]
+            #match = Match(p1, p2)
             WinnersRounds[0].append(match)
 
         # Create rounds 1 - k of matches
@@ -52,7 +63,11 @@ class Bracket(object):
             for j in range(2 ** (self.numRounds - i)):
                 p1 = "w" + str(i - 1) + "-" + str(2 * j)
                 p2 = "w" + str(i - 1) + "-" + str(2 * j + 1)
-                WinnersRounds[i].append([p1, p2])
+                wp = [i + 1, j // 2]
+                lp = [i, j]
+                match = [wp, lp]
+                #match = Match(p1, p2)
+                WinnersRounds[i].append(match)
         return WinnersRounds
 
     def generateLosersBracket(self):
@@ -67,7 +82,9 @@ class Bracket(object):
             LosersRounds[0].append([p1, p2])
 
         for i in range(self.lExtra * 2, len(self.WinnersRounds[0]) // 2 + 1):
-            match = ["w" + str(i), -1]
+            p1 = "w" + str(i)
+            p2 = -1
+            match = [p1, p2]
             LosersRounds[0].append(match)
 
         for i in range(1, self.numRounds + 1):
