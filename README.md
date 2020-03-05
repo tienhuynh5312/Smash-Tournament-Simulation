@@ -1,5 +1,5 @@
 # Smash-Tournament-Simulation
-![Python application](https://github.com/tienhuynh5312/Smash-Tournament-Simulation/workflows/Python%20application/badge.svg?branch=tien-sim-driver)
+![Python application](https://github.com/tienhuynh5312/Smash-Tournament-Simulation/workflows/Python%20application/badge.svg)
 
 # Members
 Tien Huynh
