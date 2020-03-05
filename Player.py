@@ -27,13 +27,73 @@ class Player:
 
     def walk(self, env=None):
         from simulationDriver import SimulationDriver
-        # - make the player walk toward the destination location
-        steps = SimulationDriver.TIME_STEP
-        direction_vector = (self.destination_location[0] - self.current_location[0],
-                            self.destination_location[1] - self.current_location[1])
+        import numpy as np
 
+        def get_new_location():
+            direction_vector = (self.destination_location[0] - self.current_location[0],
+                                self.destination_location[1] - self.current_location[1])
+
+            if direction_vector[0] > 0:
+                go_south = True
+            else:
+                go_south = False
+
+            if direction_vector[1] > 0:
+                go_east = True
+            else:
+                go_east = False
+
+            # random walk
+            direction_choice = np.random.random()
+            row_location = self.current_location[0]
+            col_location = self.current_location[1]
+            if direction_choice < 0.5:
+                # go vertical
+                if go_south:
+                    row_location = row_location + 1
+                else:
+                    row_location = row_location - 1
+            else:
+                # go horizontal
+                if go_east:
+                    col_location = col_location + 1
+                else:
+                    col_location = col_location - 1
+
+            if self.current_location[0] + 1 == self.destination_location[0] or \
+                    self.current_location[0] - 1 == self.destination_location[0]:
+                row_location = self.destination_location[0]
+            elif self.current_location[1] + 1 == self.destination_location[1] or \
+                    self.current_location[1] - 1 == self.destination_location[1]:
+                col_location = self.destination_location[1]
+
+            return row_location, col_location
+
+        def is_out_of_bound(row, col):
+
+            if row < 0 or row > SimulationDriver.ALL_AREA_ROWS - 1:
+                return True
+
+            if col < 0 or col > SimulationDriver.ALL_AREA_COLS - 1:
+                return True
+
+            return False
+
+        # - make the player walk toward the destination location
         for i in range(SimulationDriver.TIME_STEP):
-            pass
+            if self.current_location == self.destination_location:
+                continue
+
+            new_row_location, new_col_location = get_new_location()
+            while is_out_of_bound(new_col_location, new_row_location):
+                new_row_location, new_col_location = get_new_location()
+
+            if env is not None:
+                env.move_occupied(self.currentLocation, (new_row_location, new_col_location))
+
+            self.current_location = (new_row_location, new_col_location)
+            print(self.current_location)
+            self.walking_distance = self.walking_distance + 1
 
     def set_destination(self, location_tuple=(0, 0)):
         self.destination_location = location_tuple
