@@ -121,9 +121,3 @@ class Bracket(object):
 
     def isComplete(self):
         return self.numPlayers == 1
-
-test = Bracket(7, 2)
-
-while (test.nextMatches):
-    match = test.nextMatches.get()
-    print(match)
