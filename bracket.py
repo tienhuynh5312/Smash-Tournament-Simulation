@@ -156,19 +156,3 @@ class Bracket(object):
 
     def isComplete(self):
         return self.numPlayers == 1
-
-test = Bracket(7, 2)
-
-while (test.nextMatches):
-    matchId = test.nextMatches.get()[1]
-    print(matchId)
-    match = test.getMatch(matchId)
-    print(match)
-    match.updateResult(1)
-    winner = match.getWinner()
-    loser = match.getLoser()
-    wp = match.getwpath()
-    lp = match.getlpath()
-    print(wp)
-    print(lp)
-    test.updatePlayer(wp, winner)
