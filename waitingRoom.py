@@ -65,6 +65,6 @@ class Environment:
 
 
     def addBooth(coord):
-
+        pass
 
 
