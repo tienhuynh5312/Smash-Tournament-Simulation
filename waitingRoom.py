@@ -48,23 +48,23 @@ class Environment:
     def copyEnvironmentGrid():    #Copies all the values from environmentGrid into BoundaryGrid
         #Copies original grid, keeps wall
         for i in range(columns):
-            if(environmentGrid[WALL_ROW][i] != 0):
-                boundaryGrid[WALL_ROW+1][i+1] = environmentGrid[3][i]
+            if(self.environmentGrid[WALL_ROW][i] != 0):
+                self.boundaryGrid[WALL_ROW+1][i+1] = self.environmentGrid[3][i]
             if(i == WALL_ROW):
                 continue
             else:
-                boundaryGrid[i + 1][1:-1] = environmentGrid[i]
+                self.boundaryGrid[i + 1][1:-1] = self.environmentGrid[i]
 
 
     #Adds doors (changes boundary -1 to opening 0), can only exist in wall row (row 24)
     #doorInfo is list of tuples with door location (left side of door as index) and doorLength
-    def addDoors(list doorInfo):
+    def addDoors(doorInfo):
         for i in range(len(doorInfo)):
             for j in range(doorInfo[i][1]):
                 self.boundaryGrid[WALL_ROW][j + doorInfo[i][0]] = 0
 
 
-    def addBooth(int coord):
+    def addBooth(coord):
 
 
 
