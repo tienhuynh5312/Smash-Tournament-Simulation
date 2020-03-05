@@ -38,4 +38,9 @@ def test_4():
 
 def test_5():
     # x = Bracket(30, 2)
-    pass
+    # x.generateLosersBracket()
+    test = Bracket(7, 2)
+
+    while test.nextMatches:
+        match = test.nextMatches.get()
+        print(match)
