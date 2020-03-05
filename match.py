@@ -3,7 +3,7 @@ Class representing matches in a smash tournament
 """
 
 class Match(object):
-    def __init__(self, p1 = None, p2 = None, wpath = None, lpath = None):
+    def __init__(self,wpath = None, lpath = None, p1 = None, p2 = None):
         self.p1id = p1
         self.p2id = p2
         self.p1Wins = 0
@@ -37,6 +37,12 @@ class Match(object):
             self.p1Wins = self.p1Wins + 1
         if winner == 2:
             self.p2Wins = self.p2Wins + 1
+
+    def addPlayer(self, player):
+        if self.p1 is None:
+            self.p1 = player
+        elif self.p2 is None:
+            self.p2 = player
 
     def getwpath(self):
         return wpath
