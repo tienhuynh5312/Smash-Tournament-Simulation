@@ -42,15 +42,15 @@ class Environment:
 
         #Adds wall between watingRoom and gameRoom, should be at row 24
         for i in range(1, self.columns + 1):
-            boundaryGrid[WALL_ROW][i] = -1
+            self.boundaryGrid[self.WALL_ROW][i] = -1
 
 
-    def copyEnvironmentGrid():    #Copies all the values from environmentGrid into BoundaryGrid
+    def copyEnvironmentGrid(self):    #Copies all the values from environmentGrid into BoundaryGrid
         #Copies original grid, keeps wall
         for i in range(self.columns):
-            if(self.environmentGrid[WALL_ROW][i] != 0):
-                self.boundaryGrid[WALL_ROW+1][i+1] = self.environmentGrid[3][i]
-            if(i == WALL_ROW):
+            if(self.environmentGrid[self.WALL_ROW][i] != 0):
+                self.boundaryGrid[self.WALL_ROW+1][i+1] = self.environmentGrid[3][i]
+            if(i == self.WALL_ROW):
                 continue
             else:
                 self.boundaryGrid[i + 1][1:-1] = self.environmentGrid[i]
@@ -58,10 +58,10 @@ class Environment:
 
     #Adds doors (changes boundary -1 to opening 0), can only exist in wall row (row 24)
     #doorInfo is list of tuples with door location (left side of door as index) and doorLength
-    def addDoors(doorInfo):
+    def addDoors(self, doorInfo):
         for i in range(len(doorInfo)):
             for j in range(doorInfo[i][1]):
-                self.boundaryGrid[WALL_ROW][j + doorInfo[i][0]] = 0
+                self.boundaryGrid[self.WALL_ROW][j + doorInfo[i][0]] = 0
 
 
     # def addBooth(coord):
