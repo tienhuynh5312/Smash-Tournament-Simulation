@@ -20,29 +20,33 @@ class Match(object):
     def canBeRun(self):
         if (self.p1id is not None) & (self.p2id is not None):
             return True
-        return False 
+        return False
 
     # Returns the results of this match
-    def getResult(self):
+    def getWinner(self):
         if (self.p1Wins == self.numVictory):
-            return self.p1
+            return self.p1id
         if (self.p2Wins == self.numVictory):
-            return self.p2
+            return self.p2id
 
-        return -1
+    def getLoser(self):
+        if (self.p1Wins == self.numVictory):
+            return self.p2id
+        if (self.p2Wins == self.numVictory):
+            return self.p1id
 
     #Updates the result of this match
     def updateResult(self, winner):
         if winner == 1:
-            self.p1Wins = self.p1Wins + 1
+            self.p1Wins = self.p1Wins + 2
         if winner == 2:
-            self.p2Wins = self.p2Wins + 1
+            self.p2Wins = self.p2Wins + 2
 
     def addPlayer(self, player):
-        if self.p1 is None:
-            self.p1 = player
-        elif self.p2 is None:
-            self.p2 = player
+        if self.p1id is None:
+            self.p1id = player
+        elif self.p2id is None:
+            self.p2id = player
 
     def getwpath(self):
         return self.wpath
