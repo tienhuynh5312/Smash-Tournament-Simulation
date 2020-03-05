@@ -25,9 +25,9 @@ class Match(object):
     # Returns the results of this match
     def getResult(self):
         if (self.p1Wins == self.numVictory):
-            return p1
+            return self.p1
         if (self.p2Wins == self.numVictory):
-            return p2
+            return self.p2
 
         return -1
 
@@ -45,7 +45,7 @@ class Match(object):
             self.p2 = player
 
     def getwpath(self):
-        return wpath
+        return self.wpath
 
     def getlpath(self):
-        return lpath
+        return self.lpath
