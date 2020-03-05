@@ -37,6 +37,7 @@ class SimulationDriver:
     WAITING_AREA_ROWS = 48
     CONSOLE_AREA_ROWS = 24
     WALL_ROWS = 1
+    ALL_AREA_ROWS = WAITING_AREA_ROWS + CONSOLE_AREA_ROWS + WALL_ROWS
     ALL_AREA_COLS = 48
     NUMBER_OF_CONSOLES = 10
     TOTAL_PLAYER = 30
@@ -125,7 +126,8 @@ class SimulationDriver:
             else:
                 return np.transpose(np.ones(size_tuple))
 
-        data = draw_console(SimulationDriver.CONSOLE_HORIZONTAL_SIZE)
+        console_id = 1
+        data = draw_console(SimulationDriver.CONSOLE_HORIZONTAL_SIZE) * console_id
         for console in SimulationDriver.CONSOLE_LOCATIONS["horizontal"]:
             x1 = console[0]
             x2 = x1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[0]
@@ -133,8 +135,9 @@ class SimulationDriver:
             y2 = y1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[1]
             self.environment.env["occupied"][x1:x2, y1:y2] = data
             self.environment.env["consoles"][x1:x2, y1:y2] = data
+            console_id = console_id + 1
 
-        data = draw_console(SimulationDriver.CONSOLE_HORIZONTAL_SIZE, False)
+        data = draw_console(SimulationDriver.CONSOLE_HORIZONTAL_SIZE, False) * console_id
         for console in SimulationDriver.CONSOLE_LOCATIONS["vertical"]:
             x1 = console[0]
             x2 = x1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[1]
@@ -142,6 +145,7 @@ class SimulationDriver:
             y2 = y1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[0]
             self.environment.env["occupied"][x1:x2, y1:y2] = data
             self.environment.env["consoles"][x1:x2, y1:y2] = data
+            console_id = console_id + 1
 
     def __generate_players(self):
         import numpy as np
@@ -174,6 +178,4 @@ class SimulationDriver:
             self.environment.set_occupied(organizer, self.environment.env["organizers"])
 
     def __generate_environment(self):
-        self.environment = Environment(SimulationDriver.WAITING_AREA_ROWS +
-                                       SimulationDriver.CONSOLE_AREA_ROWS +
-                                       SimulationDriver.WALL_ROWS, SimulationDriver.ALL_AREA_COLS)
+        self.environment = Environment(SimulationDriver.ALL_AREA_ROWS, SimulationDriver.ALL_AREA_COLS)
