@@ -1,5 +1,6 @@
 # - Import modules
-from enviornment import *
+from environment import Environment
+from player import Player
 
 
 class SimulationDriver:
@@ -28,21 +29,40 @@ class SimulationDriver:
     Return the amount of time that the tournament took and the net profit of the tournament.
 
     """
+    TIME_STEP = 4  # second
+    SIDE_LENGTH = 1  # ft
+    DOOR_LENGTH = 5
+    NUMBER_OF_DOORS = 4
+    WALL_ROW = 15  # which row we place the wall
+    WAITING_AREA_ROWS = 48
+    CONSOLE_AREA_ROWS = 24
+    WALL_ROWS = 1
+    ALL_AREA_COLS = 48
+    NUMBER_OF_CONSOLES = 10
+    TOTAL_PLAYER = 30
 
+    ORGANIZER_LOCATIONS = [(30, 40)]
+    CONSOLE_LOCATIONS = [(0,1), (0,5), (0, 23)]
+    CONSOLE_LOCATIONS = {"horizontal": [(2,5), (0, 23)],
+                         "vertical": [(0,0)]}
+    CONSOLE_HORIZONTAL_SIZE = (2, 4) # console size when in horizontal size.
     def __init__(self):
         """
         Initialize the simulation driver for stage 1 in the description.
         """
+        self.total_initial_players = SimulationDriver.TOTAL_PLAYER
         self.console_rental_fee_per_hour = 10  # dollars
         self.player_admission_profit = 3  # dollars
         self.time_stamp = 0
-        self.__time_step = 5
+        self.__time_step = SimulationDriver.TIME_STEP
         self.console_rental_fee = self.get_console_rental_fee()  # $ per hour
         self.tournament_profit = self.get_tournament_profit()
 
         # - Create environment.
         # - TODO: after creating the environment class.
+        self.environment = None
         self.__generate_environment()
+        self.env = self.environment.env
 
         # - TODO: place consoles
         self.__generate_console_configuration()
@@ -55,20 +75,19 @@ class SimulationDriver:
 
         # - TODO: place players
         self.__generate_players()
-        self.totalInitialPlayers = 0  # TODO: call method from player.py to get total players
 
     def begin(self):
+        """Begin the simulation"""
         self.__start_tournament()
         self.__report_tournament()
 
     def __start_tournament(self):
+        import numpy as np
         # - TODO: Run the tournament
 
         while True:
             # - Increase timeStamp by timeStep
             self.time_stamp = self.time_stamp + self.__time_step
-            self.time_stamp = self.time_stamp + self.__time_step
-
 
             # - Call a pair of player to the reporting station
             # - If they are here:
@@ -89,27 +108,72 @@ class SimulationDriver:
         pass
 
     def get_console_rental_fee(self):
-
         if self.time_stamp == 0:
             return 0
         else:
-            return self.timeStampt / 3600 * self.console_rental_fee_per_hour
+            return self.time_stamp / 3600 * self.console_rental_fee_per_hour
 
     def get_tournament_profit(self):
-        total_profit = self.totalInitialPlayers * self.player_admission_profit - self.get_console_rental_fee()
+        total_profit = self.total_initial_players * self.player_admission_profit - self.get_console_rental_fee()
         return total_profit
 
     def __generate_console_configuration(self):
-        return 0
+        def draw_console(size_tuple, horizontal=True):
+            import numpy as np
+            if horizontal:
+                return np.ones(size_tuple)
+            else:
+                return np.transpose(np.ones(size_tuple))
+
+        data = draw_console(SimulationDriver.CONSOLE_HORIZONTAL_SIZE)
+        for console in SimulationDriver.CONSOLE_LOCATIONS["horizontal"]:
+            x1 = console[0]
+            x2 = x1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[0]
+            y1 = console[1]
+            y2 = y1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[1]
+            self.environment.env["occupied"][x1:x2, y1:y2] = data
+            self.environment.env["consoles"][x1:x2, y1:y2] = data
+
+        data = draw_console(SimulationDriver.CONSOLE_HORIZONTAL_SIZE, False)
+        for console in SimulationDriver.CONSOLE_LOCATIONS["vertical"]:
+            x1 = console[0]
+            x2 = x1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[1]
+            y1 = console[1]
+            y2 = y1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[0]
+            self.environment.env["occupied"][x1:x2, y1:y2] = data
+            self.environment.env["consoles"][x1:x2, y1:y2] = data
 
     def __generate_players(self):
-        return 0
+        import numpy as np
+        self.players_list = {}
+        # - Set the location of the player randomly
+        row_min = SimulationDriver.CONSOLE_AREA_ROWS + SimulationDriver.WALL_ROWS
+        row_max = row_min + SimulationDriver.WAITING_AREA_ROWS
+        col_min = 0
+        col_max = SimulationDriver.ALL_AREA_COLS
+        for i in range(self.total_initial_players):
+            self.players_list[i] = Player(player_id=i)
+            random_location_row = np.random.randint(row_min, row_max)
+            random_location_col = np.random.randint(col_min, col_max)
+            random_location = (random_location_row, random_location_col)
+
+            # if there is something occupied at random_location, generate another one.
+            while self.environment.env["occupied"][random_location] == 1:
+                random_location_row = np.random.randint(row_min, row_max)
+                random_location_col = np.random.randint(col_min, col_max)
+                random_location = (random_location_row, random_location_col)
+
+            self.players_list[i].current_location = random_location
+            self.environment.set_occupied(random_location, self.environment.env["players"])
 
     def __generate_obstacles(self):
         pass
 
     def __generate_report_stations(self):
-        pass
+        for organizer in SimulationDriver.ORGANIZER_LOCATIONS:
+            self.environment.set_occupied(organizer, self.environment.env["organizers"])
 
     def __generate_environment(self):
-        pass
+        self.environment = Environment(SimulationDriver.WAITING_AREA_ROWS +
+                                       SimulationDriver.CONSOLE_AREA_ROWS +
+                                       SimulationDriver.WALL_ROWS, SimulationDriver.ALL_AREA_COLS)
