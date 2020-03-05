@@ -3,7 +3,7 @@ import pytest
 from simulationDriver import SimulationDriver
 from environment import Environment
 from player import Player
-
+from bracket import Bracket
 
 def test_1():
     assert 1 + 1 == 2, "Test Passed"
@@ -35,3 +35,7 @@ def test_4():
     x = Player(0)
     y = Player(1)
     assert Player.total_players == 2
+
+def test_5():
+    # x = Bracket(30, 2)
+    pass

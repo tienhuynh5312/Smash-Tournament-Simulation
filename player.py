@@ -32,6 +32,9 @@ class Player:
         direction_vector = (self.destination_location[0] - self.current_location[0],
                             self.destination_location[1] - self.current_location[1])
 
+        for i in range(SimulationDriver.TIME_STEP):
+            pass
+
     def set_destination(self, location_tuple=(0, 0)):
         self.destination_location = location_tuple
 

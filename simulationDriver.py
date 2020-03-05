@@ -156,6 +156,13 @@ class SimulationDriver:
             random_location_row = np.random.randint(row_min, row_max)
             random_location_col = np.random.randint(col_min, col_max)
             random_location = (random_location_row, random_location_col)
+
+            # if there is something occupied at random_location, generate another one.
+            while self.environment.env["occupied"][random_location] == 1:
+                random_location_row = np.random.randint(row_min, row_max)
+                random_location_col = np.random.randint(col_min, col_max)
+                random_location = (random_location_row, random_location_col)
+
             self.players_list[i].current_location = random_location
             self.environment.set_occupied(random_location, self.environment.env["players"])
 
