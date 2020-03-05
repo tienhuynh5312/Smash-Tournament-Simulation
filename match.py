@@ -3,21 +3,22 @@ Class representing matches in a smash tournament
 """
 
 class Match(object):
-    def __init__(self, p1 = null, p2 = null, wpath = null, lpath = null):
+    def __init__(self, p1 = None, p2 = None, wpath = None, lpath = None):
         self.p1id = p1
         self.p2id = p2
         self.p1Wins = 0
         self.p2Wins = 0
         self.wpath = wpath
         self.lpath = lpath
-        numVictory = 2
+        self.numVictory = 2
 
     def __str__(self):
         return "p1: " + str(self.p1id) + "-" +\
                "p2: " + str(self.p2id)
+
     # Returns whether or not this match can be run by the reporting station
     def canBeRun(self):
-        if (self.p1id != null) & (self.p2id != null):
+        if (self.p1id is not None) & (self.p2id is not None):
             return true
         return false
 
