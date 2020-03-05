@@ -3,6 +3,7 @@ Class designed to represent the double elmination format of tournaments
 """
 
 from match import Match
+from queue import PriorityQueue
 
 class Bracket(object):
     # Generate Bracket
@@ -25,6 +26,7 @@ class Bracket(object):
             j = j + 1
         self.lExtra = self.wExtra - 2**j
         # Determine the first round of matches
+        self.nextMatches = PriorityQueue()
         self.WinnersRounds = self.generateWinnersBracket()
         self.LosersRounds = self.generateLosersBracket()
 
@@ -48,6 +50,7 @@ class Bracket(object):
             match = [p1, p2, wp, lp]
             #match = Match(p1, p2)
             WinnersRounds[0].append(match)
+            self.nextMatches.put((0, [0, i]))
 
         for i in range(1, self.numPlayers - self.wExtra * 2 + 1):
             p1 = i
@@ -55,8 +58,9 @@ class Bracket(object):
             wp = [1, (i + self.wExtra) // 2 - 1]
             lp = [0, (i + self.wExtra) // 2 - 1]
             match = [p1, p2, wp, lp]
-            #match = Match(p1, p2)
+            #match = Match(wp, lp)
             WinnersRounds[0].append(match)
+            self.nextMatches.put((0, [0, self.wExtra - 1 + i]))
 
         # Create rounds 1 - k of matches
         for i in range(1, self.numRounds + 1):
@@ -64,9 +68,9 @@ class Bracket(object):
                 p1 = "w" + str(i - 1) + "-" + str(2 * j)
                 p2 = "w" + str(i - 1) + "-" + str(2 * j + 1)
                 wp = [i + 1, j // 2]
-                lp = [i, j]
+                lp = [2 * (i -1) + 1, j]
                 match = [wp, lp]
-                #match = Match(p1, p2)
+                # match = Match(wp, lp)
                 WinnersRounds[i].append(match)
         return WinnersRounds
 
@@ -79,16 +83,23 @@ class Bracket(object):
         for i in range(self.lExtra):
             p1 = "w" + str(2 * i)
             p2 = "w" + str(2 * i + 1)
-            LosersRounds[0].append([p1, p2])
+            wp = [1, i // 2]
+            lp = -1
+            match = [wp, lp]
+            LosersRounds[0].append(match)
 
         for i in range(self.lExtra * 2, len(self.WinnersRounds[0]) // 2 + 1):
             p1 = "w" + str(i)
             p2 = -1
-            match = [p1, p2]
+            wp = [1, i // 2]
+            lp = -1
+            match = [wp, lp]
             LosersRounds[0].append(match)
 
         for i in range(1, self.numRounds + 1):
             for j in range(2 ** (self.numRounds - i)):
+                wp = [i + 1, j // 2]
+                lp = -1
                 if (i % 2) == 0:
                     p1 = "l" + str(i) + "-" + str(2 * j)
                     p2 = "l" + str(i) + "-" + str(2 * j + 1)
@@ -97,16 +108,22 @@ class Bracket(object):
                     p1 = "l" + str(i) + "-" + str(j)
                     # Loser from current round
                     p2 = "w" + str(i) + "-" + str(j)
-                LosersRounds[i].append([p1, p2])
+                match = [wp, lp]
+                # match = Match(wp, lp)
+                LosersRounds[i].append(match)
         return LosersRounds
 
-    def getMatch(self):
+    def getMatch(self, type, round, matchNumber):
         return
 
-    def reportMatch(self, round, matchNumber):
+    def reportMatch(self, type, round, matchNumber):
         return
 
     def isComplete(self):
         return self.numPlayers == 1
 
-Bracket(7, 2)
+test = Bracket(7, 2)
+
+while (test.nextMatches):
+    match = test.nextMatches.get()
+    print(match)
