@@ -19,8 +19,8 @@ class Match(object):
     # Returns whether or not this match can be run by the reporting station
     def canBeRun(self):
         if (self.p1id is not None) & (self.p2id is not None):
-            return true
-        return false
+            return True
+        return False 
 
     # Returns the results of this match
     def getResult(self):
