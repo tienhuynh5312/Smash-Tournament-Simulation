@@ -33,6 +33,16 @@ def test_4():
     assert Player.total_eliminated_players == 0
     assert Player.total_players == 0
     x = Player(0)
+    x.set_destination((10, 5))
+    x.walk()
+    x.walk()
+    x.walk()
+    x.walk()
+    x.walk()
+    x.walk()
+    x.walk()
+    x.walk()
+    x.walk()
     y = Player(1)
     assert Player.total_players == 2
 
