@@ -168,14 +168,14 @@ class SimulationDriver:
                 random_location = (random_location_row, random_location_col)
 
             self.players_list[i].current_location = random_location
-            self.environment.set_occupied(random_location, self.environment.env["players"])
+            self.environment.set_occupied(random_location, "players")
 
     def __generate_obstacles(self):
         pass
 
     def __generate_report_stations(self):
         for organizer in SimulationDriver.ORGANIZER_LOCATIONS:
-            self.environment.set_occupied(organizer, self.environment.env["organizers"])
+            self.environment.set_occupied(organizer, "organizers")
 
     def __generate_environment(self):
         self.environment = Environment(SimulationDriver.ALL_AREA_ROWS, SimulationDriver.ALL_AREA_COLS)

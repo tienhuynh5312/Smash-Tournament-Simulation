@@ -46,20 +46,20 @@ class Environment:
         """This method is migrated to simulationDriver instead."""
         pass
 
-    def set_occupied(self, location_tuple, env_arr=None):
+    def set_occupied(self, location_tuple, env_string=None):
         self.env["occupied"][location_tuple] = 1
-        if env_arr is not None:
-            env_arr[location_tuple] = 1
+        if env_string is not None:
+            self.env[env_string][location_tuple] = 1
 
-    def remove_occupied(self, location_tuple, env_arr=None):
+    def remove_occupied(self, location_tuple, env_string=None):
         self.env["occupied"][location_tuple] = 0
-        if env_arr is not None:
-            env_arr[location_tuple] = 0
+        if env_string is not None:
+            self.env[env_string][location_tuple] = 0
 
-    def move_occupied(self, location_origin_tuple, location_destination_tuple, env_arr=None):
+    def move_occupied(self, location_origin_tuple, location_destination_tuple, env_string=None):
         self.remove_occupied(location_origin_tuple)
         self.set_occupied(location_destination_tuple)
-        if env_arr is not None:
-            env_arr[location_origin_tuple] = 0
-            env_arr[location_destination_tuple] = 1
+        if env_string is not None:
+            self.env[env_string][location_origin_tuple] = 0
+            self.env[env_string][location_destination_tuple] = 1
 
