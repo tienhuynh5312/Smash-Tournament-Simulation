@@ -27,6 +27,7 @@ class Bracket(object):
         self.lExtra = self.wExtra - 2**j
         # Determine the first round of matches
         self.nextMatches = PriorityQueue()
+        self.grandFinals = self.generateGrandsBracket()
         self.WinnersRounds = self.generateWinnersBracket()
         self.LosersRounds = self.generateLosersBracket()
 
@@ -67,10 +68,13 @@ class Bracket(object):
             for j in range(2 ** (self.numRounds - i)):
                 p1 = "w" + str(i - 1) + "-" + str(2 * j)
                 p2 = "w" + str(i - 1) + "-" + str(2 * j + 1)
-                wp = [i + 1, j // 2]
-                lp = [2 * (i -1) + 1, j]
-                match = [wp, lp]
-                # match = Match(wp, lp)
+                wp = [0, i + 1, j // 2]
+                lp = [1, 2 * (i -1) + 1, j]
+                if (i == self.numRounds):
+                    wp = [2, i + 1, j // 2]
+                    lp = [2, i + 1, j // 2]
+                # match = [wp, lp]
+                match = Match(wp, lp)
                 WinnersRounds[i].append(match)
         return WinnersRounds
 
@@ -113,6 +117,13 @@ class Bracket(object):
                 LosersRounds[i].append(match)
         return LosersRounds
 
+    def generateGrandsBracket(self):
+        grandsBracket = []
+        #Add Grand finals
+        match = Match(-1, -1)
+        grandsBracket.append(match)
+        return grandsBracket
+
     def getMatch(self, matchInfo):
         type = matchInfo[0]
         round = matchInfo[1]
@@ -123,15 +134,24 @@ class Bracket(object):
         elif (type == 1):
             return self.LosersRounds[round][matchNumber]
 
-    def reportMatch(self, matchInfo):
-        type = matchInfo[0]
-        round = matchInfo[1]
-        matchNumber = matchInfo[2]
+    def updatePlayer(self, matchInfo, player):
+        if matchInfo == -1:
+            self.numAlive = self.numAlive - 1
+            self.numEliminated = self.numEliminated + 1
+        else:
+            type = matchInfo[0]
+            round = matchInfo[1]
+            matchNumber = matchInfo[2]
 
-        if (type == 0):
-            match = self.WinnersRounds[round][matchNumber]
-        elif (type == 1):
-            match = self.LosersRounds[round][matchNumber]
+            if (type == 0):
+                match = self.WinnersRounds[round][matchNumber]
+            elif (type == 1):
+                match = self.LosersRounds[round][matchNumber]
+            elif (type == 2):
+                match = self.grandFinals[matchNumber]
+            match.addPlayer(player)
+            if(match.canBeRun()):
+                self.nextMatches.put((round, matchInfo))
 
 
     def isComplete(self):
@@ -145,9 +165,10 @@ while (test.nextMatches):
     match = test.getMatch(matchId)
     print(match)
     match.updateResult(1)
-    print(match.getWinner())
-    print(match.getLoser())
+    winner = match.getWinner()
+    loser = match.getLoser()
     wp = match.getwpath()
     lp = match.getlpath()
     print(wp)
     print(lp)
+    test.updatePlayer(wp, winner)
