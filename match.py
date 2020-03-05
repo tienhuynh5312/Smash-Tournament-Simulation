@@ -12,15 +12,18 @@ class Match(object):
 
 
     def getResult(self):
-        if (p1Wins == numVictory):
+        if (self.p1Wins == self.numVictory):
             return p1
-        if (p2Wins == numVictory):
+        if (self.p2Wins == self.numVictory):
             return p2
 
         return -1
 
-    def updateResult(self):
-        return
+    def updateResult(self, winner):
+        if winner == 1:
+            self.p1Wins = self.p1Wins + 1
+        if winner == 2:
+            self.p2Wins = self.p2Wins + 1
 
     def getwpath(self):
         return wpath
