@@ -41,6 +41,11 @@ class SimulationDriver:
     NUMBER_OF_CONSOLES = 10
     TOTAL_PLAYER = 30
 
+    ORGANIZER_LOCATIONS = [(30, 40)]
+    CONSOLE_LOCATIONS = [(0,1), (0,5), (0, 23)]
+    CONSOLE_LOCATIONS = {"horizontal": [(2,5), (0, 23)],
+                         "vertical": [(0,0)]}
+    CONSOLE_HORIZONTAL_SIZE = (2, 4) # console size when in horizontal size.
     def __init__(self):
         """
         Initialize the simulation driver for stage 1 in the description.
@@ -113,19 +118,53 @@ class SimulationDriver:
         return total_profit
 
     def __generate_console_configuration(self):
-        return 0
+        def draw_console(size_tuple, horizontal=True):
+            import numpy as np
+            if horizontal:
+                return np.ones(size_tuple)
+            else:
+                return np.transpose(np.ones(size_tuple))
+
+        data = draw_console(SimulationDriver.CONSOLE_HORIZONTAL_SIZE)
+        for console in SimulationDriver.CONSOLE_LOCATIONS["horizontal"]:
+            x1 = console[0]
+            x2 = x1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[0]
+            y1 = console[1]
+            y2 = y1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[1]
+            self.environment.env["occupied"][x1:x2, y1:y2] = data
+            self.environment.env["consoles"][x1:x2, y1:y2] = data
+
+        data = draw_console(SimulationDriver.CONSOLE_HORIZONTAL_SIZE, False)
+        for console in SimulationDriver.CONSOLE_LOCATIONS["vertical"]:
+            x1 = console[0]
+            x2 = x1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[1]
+            y1 = console[1]
+            y2 = y1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[0]
+            self.environment.env["occupied"][x1:x2, y1:y2] = data
+            self.environment.env["consoles"][x1:x2, y1:y2] = data
 
     def __generate_players(self):
+        import numpy as np
         self.players_list = {}
+        # - Set the location of the player randomly
+        row_min = SimulationDriver.CONSOLE_AREA_ROWS + SimulationDriver.WALL_ROWS
+        row_max = row_min + SimulationDriver.WAITING_AREA_ROWS
+        col_min = 0
+        col_max = SimulationDriver.ALL_AREA_COLS
         for i in range(self.total_initial_players):
             self.players_list[i] = Player(player_id=i)
-        # - Set the location of the player randomly
+            random_location_row = np.random.randint(row_min, row_max)
+            random_location_col = np.random.randint(col_min, col_max)
+            random_location = (random_location_row, random_location_col)
+            self.players_list[i].current_location = random_location
+            self.environment.set_occupied(random_location, self.environment.env["players"])
 
     def __generate_obstacles(self):
         pass
 
     def __generate_report_stations(self):
-        pass
+        for organizer in SimulationDriver.ORGANIZER_LOCATIONS:
+            self.environment.set_occupied(organizer, self.environment.env["organizers"])
 
     def __generate_environment(self):
         self.environment = Environment(SimulationDriver.WAITING_AREA_ROWS +
