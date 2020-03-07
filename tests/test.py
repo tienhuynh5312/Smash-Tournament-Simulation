@@ -10,10 +10,11 @@ def test_1():
 
 
 def test_2():
+    SimulationDriver.TOTAL_PLAYERS = 30
     x = SimulationDriver()
     assert x.time_stamp == 0, "Time stamp = 0"
     x.begin()
-    assert x.time_stamp == SimulationDriver.TIME_STEP, "Time stamp = 5"
+    assert x.time_stamp == 40, "Time stamp = 5"
     assert x.total_initial_players == 30, "Initial Players = 30"
     assert x.players_list[0].player_id == 0
     assert x.players_list[15].player_id == 15
@@ -32,19 +33,17 @@ def test_4():
     Player.reset()
     assert Player.total_eliminated_players == 0
     assert Player.total_players == 0
+    sim = SimulationDriver()
     x = Player(0)
-    x.set_destination((10, 5))
-    x.walk()
-    x.walk()
-    x.walk()
-    x.walk()
-    x.walk()
-    x.walk()
-    x.walk()
-    x.walk()
-    x.walk()
+    # x.set_destination((10, 10))
+    # # x.walk(sim.environment)
+    # # x.walk(sim.environment)
+    # # x.walk(sim.environment)
+    # # x.walk(sim.environment)
+    # # x.walk(sim.environment)
+    # # x.walk(sim.environment)
     y = Player(1)
-    assert Player.total_players == 2
+    assert Player.total_players == 32
 
 def test_5():
     pass
