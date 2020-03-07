@@ -1,3 +1,5 @@
+from Utility import print_debug
+
 class Player:
     """
     Class to represent the behavior of competitors at smash tournaments
@@ -19,13 +21,16 @@ class Player:
         self.is_playing = False
         self.is_recently_eliminated = False
         self.current_location = (0, 0)
-        self.destination_location = (0, 0)
+        self.destination_location = self.current_location
 
     def __del__(self):
         Player.total_players = Player.total_players - 1
         Player.total_eliminated_players = Player.total_eliminated_players - 1
 
-    def walk(self, env=None):
+    def is_here(self):
+        return self.current_location == self.destination_location
+
+    def walk(self, env):
         from simulationDriver import SimulationDriver
         import numpy as np
 
@@ -70,7 +75,6 @@ class Player:
             return row_location, col_location
 
         def is_out_of_bound(row, col):
-
             if row < 0 or row > SimulationDriver.ALL_AREA_ROWS - 1:
                 return True
 
@@ -81,18 +85,23 @@ class Player:
 
         # - make the player walk toward the destination location
         for i in range(SimulationDriver.TIME_STEP):
-            if self.current_location == self.destination_location:
-                continue
+            if self.is_here():
+                print_debug(f"player id {self.player_id} is here at {self.destination_location}")
+                break
 
+            try_timeout = 4
             new_row_location, new_col_location = get_new_location()
             while is_out_of_bound(new_col_location, new_row_location):
                 new_row_location, new_col_location = get_new_location()
+                try_timeout = try_timeout - 1
+                if try_timeout == 0:
+                    break
 
             if env is not None:
-                env.move_occupied(self.currentLocation, (new_row_location, new_col_location))
+                env.move_occupied(self.current_location, (new_row_location, new_col_location))
 
             self.current_location = (new_row_location, new_col_location)
-            print(self.current_location)
+            print_debug(self.current_location)
             self.walking_distance = self.walking_distance + 1
 
     def set_destination(self, location_tuple=(0, 0)):
@@ -111,7 +120,7 @@ class Player:
         import numpy as np
         if self.is_recently_eliminated:
             # -  If recently eliminated, give the player random time to stick around
-            self.play_around_time = np.random.normal(30, 10)  # - 30 mins * 60 seconds. std 10
+            self.play_around_time = np.random.normal(30*60, 10*60)  # - 30 mins * 60 seconds. std 10
         else:
             # - now let the player move around for fun.
             pass
