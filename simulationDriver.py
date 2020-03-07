@@ -1,6 +1,7 @@
 # - Import modules
 from environment import Environment
 from player import Player
+from Utility import print_debug
 
 
 class SimulationDriver:
@@ -40,18 +41,19 @@ class SimulationDriver:
     ALL_AREA_ROWS = WAITING_AREA_ROWS + CONSOLE_AREA_ROWS + WALL_ROWS
     ALL_AREA_COLS = 48
     NUMBER_OF_CONSOLES = 10
-    TOTAL_PLAYER = 30
+    TOTAL_PLAYERS = 100
 
     ORGANIZER_LOCATIONS = [(30, 40)]
-    CONSOLE_LOCATIONS = [(0,1), (0,5), (0, 23)]
-    CONSOLE_LOCATIONS = {"horizontal": [(2,5), (0, 23)],
-                         "vertical": [(0,0)]}
-    CONSOLE_HORIZONTAL_SIZE = (2, 4) # console size when in horizontal size.
+    CONSOLE_LOCATIONS = [(0, 1), (0, 5), (0, 23)]
+    CONSOLE_LOCATIONS = {"horizontal": [(2, 5), (0, 23)],
+                         "vertical": [(0, 0)]}
+    CONSOLE_HORIZONTAL_SIZE = (2, 4)  # console size when in horizontal size.
+
     def __init__(self):
         """
         Initialize the simulation driver for stage 1 in the description.
         """
-        self.total_initial_players = SimulationDriver.TOTAL_PLAYER
+        self.total_initial_players = SimulationDriver.TOTAL_PLAYERS
         self.console_rental_fee_per_hour = 10  # dollars
         self.player_admission_profit = 3  # dollars
         self.time_stamp = 0
@@ -85,10 +87,22 @@ class SimulationDriver:
     def __start_tournament(self):
         import numpy as np
         # - TODO: Run the tournament
+        for player in self.players_list.keys():
+            self.players_list[player].set_destination(SimulationDriver.ORGANIZER_LOCATIONS[0])
 
+        tries = 0
         while True:
             # - Increase timeStamp by timeStep
             self.time_stamp = self.time_stamp + self.__time_step
+            print_debug(f"{self.time_stamp}===========")
+            for player in self.players_list.keys():
+                print_debug(f"-->player id {self.players_list[player].player_id}")
+                if not self.players_list[player].is_here():
+                    self.players_list[player].walk(self.environment)
+                else:
+                    # player arrived, do something
+                    print_debug(f"Player ID {self.players_list[player].player_id} should do something")
+                    pass
 
             # - Call a pair of player to the reporting station
             # - If they are here:
@@ -103,7 +117,9 @@ class SimulationDriver:
             #       player.playAround()
 
             # - TODO: condition to end the outermost while loop
-            break
+            tries = tries + 1
+            if tries == 10:
+                break
 
     def __report_tournament(self):
         pass
@@ -126,28 +142,28 @@ class SimulationDriver:
             else:
                 return np.transpose(np.ones(size_tuple))
 
-        console_id = 1
-        data = draw_console(SimulationDriver.CONSOLE_HORIZONTAL_SIZE) * console_id
+        data = draw_console(SimulationDriver.CONSOLE_HORIZONTAL_SIZE)
         for console in SimulationDriver.CONSOLE_LOCATIONS["horizontal"]:
             x1 = console[0]
             x2 = x1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[0]
             y1 = console[1]
             y2 = y1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[1]
-            self.environment.env["occupied"][x1:x2, y1:y2] = data
+            self.environment.env["occupied"][x1:x2, y1:y2] = 1
             self.environment.env["consoles"][x1:x2, y1:y2] = data
-            console_id = console_id + 1
 
-        data = draw_console(SimulationDriver.CONSOLE_HORIZONTAL_SIZE, False) * console_id
+        data = draw_console(SimulationDriver.CONSOLE_HORIZONTAL_SIZE, False)
         for console in SimulationDriver.CONSOLE_LOCATIONS["vertical"]:
             x1 = console[0]
             x2 = x1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[1]
             y1 = console[1]
             y2 = y1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[0]
-            self.environment.env["occupied"][x1:x2, y1:y2] = data
+            self.environment.env["occupied"][x1:x2, y1:y2] = 1
             self.environment.env["consoles"][x1:x2, y1:y2] = data
-            console_id = console_id + 1
 
     def __generate_players(self):
+        if SimulationDriver.WAITING_AREA_ROWS*SimulationDriver.ALL_AREA_COLS < SimulationDriver.TOTAL_PLAYERS:
+            print_debug("Not enough room in the waiting area for all the players.")
+            exit(0)
         import numpy as np
         self.players_list = {}
         # - Set the location of the player randomly
