@@ -1,7 +1,7 @@
 # - Import modules
 from environment import Environment
 from player import Player
-from Utility import print_debug
+from Utility import *
 
 
 class SimulationDriver:
@@ -48,6 +48,10 @@ class SimulationDriver:
     CONSOLE_LOCATIONS = {"horizontal": [(2, 5), (0, 23)],
                          "vertical": [(0, 0)]}
     CONSOLE_HORIZONTAL_SIZE = (2, 4)  # console size when in horizontal size.
+
+    PLAYER_SHOW_UP_LATE_PERCENT = 0.03
+    PLAYER_BATHROOM_PERCENT = 0.05
+    BATHROOM_DISTANCE = 100
 
     def __init__(self):
         """
