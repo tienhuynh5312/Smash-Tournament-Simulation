@@ -15,7 +15,7 @@ class TestForQuestions:
         test = simulationDriver.SimulationDriver()
         test.TOTAL_PLAYERS = playerNum
         for reportingStation in range(1, staffNum):
-            test.generate_report_stations()
+            test.__generate_report_stations()
             start_time = time.time()
             test.begin()
             print("The tournament ran for: " + (time.time() - start_time) + " seconds with " + reportingStation + "staff members.")
@@ -23,6 +23,9 @@ class TestForQuestions:
 
 
     # What is the best setup to optimize for profitability while still staying within time?
+
+    # '''This function'''
+    # def optimizeSetup(maxConsoles, maxStaff, ):
 
     # How does whether we use a random walk or calculated distance actually impact runtime?
 
