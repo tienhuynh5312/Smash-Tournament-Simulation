@@ -17,14 +17,18 @@ class Bracket(object):
 
         # Calculate number of rounds needed
         k = 0
-        while 2**(k + 1) < numPlayers:
+        while 2**k < numPlayers:
             k = k + 1
         self.numRounds = k
-        self.wExtra = numPlayers - 2**k
-        j = 0
-        while 2**(j + 1) < self.wExtra:
-            j = j + 1
-        self.lExtra = self.wExtra - 2**j
+        self.wExtra = numPlayers - 2**(k - 1)
+        j = 2**(k-1)
+        count = 1
+        while j > 1:
+            j = j // 2
+            count = count + 2
+
+        self.lExtra = 2**(k-1) - self.wExtra
+        self.numLosersRounds = count
         # Determine the first round of matches
         self.nextMatches = PriorityQueue()
         self.GrandFinals = self.__generateGrandsBracket()
@@ -33,14 +37,23 @@ class Bracket(object):
 
     # --------------------------Public Methods -----------------------
     def __str__(self):
+        # Prints the winners matches
         string = "Winners Matches:\n"
+        string = string + "Num Rounds: " + str(self.numRounds) + "\n"
         for i in range(len(self.WinnersRounds)):
             for j in range(len(self.WinnersRounds[i])):
                 string = string + "[" + str(i) + ", " + str(j) + "]" + str(self.WinnersRounds[i][j]) + "\n"
+
+        # Prints the losers matches
+        string = string + "\n"
         string = string + "Losers Matches:\n"
+        string = string + "Num Rounds: " + str(self.numLosersRounds) + "\n"
         for i in range(len(self.LosersRounds)):
             for j in range(len(self.LosersRounds[i])):
                 string = string + "[" + str(i) + ", " + str(j) + "]" + str(self.LosersRounds[i][j]) + "\n"
+
+        # Prints Grand finals matches
+        string = string + "\n"
         string = string + "Finals:\n"
         for i in self.GrandFinals:
              string = string + str(i) + "\n"
@@ -82,7 +95,7 @@ class Bracket(object):
     # ------------------------ Private Methods -------------------
     def __generateWinnersBracket(self):
         WinnersRounds = []
-        for i in range(self.numRounds + 1):
+        for i in range(self.numRounds):
             WinnersRounds.append([])
 
         # Create round 0 of matches
@@ -98,59 +111,54 @@ class Bracket(object):
         for i in range(1, self.numPlayers - self.wExtra * 2 + 1):
             p1 = i
             p2 = -1
-            wp = [0, 1, (i + self.wExtra) // 2 - 1]
-            lp = [1, 0, (i + self.wExtra) // 2 - 1]
+            wp = [0, 1, (i + self.wExtra - 1) // 2]
+            lp = [1, 0, (i + self.wExtra - 1) // 2]
             match = Match(wp, lp, p1, p2)
             WinnersRounds[0].append(match)
             self.nextMatches.put((0, [0, 0, self.wExtra - 1 + i]))
 
         # Create rounds 1 - k of matches
-        for i in range(1, self.numRounds + 1):
-            for j in range(2 ** (self.numRounds - i)):
+        for i in range(1, self.numRounds):
+            for j in range(2 ** (self.numRounds - 1 - i)):
                 wp = [0, i + 1, j // 2]
                 lp = [1, 2 * (i -1) + 1, j]
-                if (i == self.numRounds):
+                if i == self.numRounds - 1:
                     wp = [2, i + 1, j // 2]
-                    lp = [2, i + 1, j // 2]
+                    lp = [1, 2 * (i - 1) + 1, j]
                 match = Match(wp, lp)
                 WinnersRounds[i].append(match)
         return WinnersRounds
 
+    # Losers brackets alternate in the order in which they are generated
+    # The first match both players have just been sent to losers
+    # In the second match the winner of a losers match plays the loser of a
+    # winners match
+    # This pattern continues until finals are reached
     def __generateLosersBracket(self):
         LosersRounds = []
-        for i in range(self.numRounds + 1):
+        for i in range(self.numLosersRounds):
             LosersRounds.append([])
 
         # Create round 0 of matches
         for i in range(self.lExtra):
-            p1 = "w" + str(2 * i)
-            p2 = "w" + str(2 * i + 1)
             wp = [1, 1, i // 2]
             lp = -1
             match = Match(wp, lp)
             LosersRounds[0].append(match)
 
-        for i in range(self.lExtra * 2, len(self.WinnersRounds[0]) // 2 + 1):
-            p1 = "w" + str(i)
-            p2 = -1
-            wp = [1, 1, i // 2]
+        for i in range(self.lExtra, 2**(self.numRounds - 1)):
+            wp = [1, 1, (i + self.lExtra - 2) // 2]
             lp = -1
             match = Match(wp, lp)
             LosersRounds[0].append(match)
 
         # Generate the remaining losers matches
-        for i in range(1, self.numRounds + 1):
-            for j in range(2 ** (self.numRounds - i)):
+        for i in range(1, self.numLosersRounds):
+            for j in range(2**(self.numRounds - 1) // (2 ** ((i + 1) // 2))):
                 wp = [1, i + 1, j // 2]
                 lp = -1
-                if (i % 2) == 0:
-                    p1 = "l" + str(i) + "-" + str(2 * j)
-                    p2 = "l" + str(i) + "-" + str(2 * j + 1)
-                else:
-                    # Winner from previous round
-                    p1 = "l" + str(i) + "-" + str(j)
-                    # Loser from current round
-                    p2 = "w" + str(i) + "-" + str(j)
+                if (i % 2) == 1:
+                    wp = [1, i + 1, j]
                 match = Match(wp, lp)
                 # match = Match(wp, lp)
                 LosersRounds[i].append(match)
@@ -158,11 +166,11 @@ class Bracket(object):
 
     def __generateGrandsBracket(self):
         grandsBracket = []
-        #Add Grand finals
+        # Add Grand finals
         match = Match(-1, -1)
         grandsBracket.append(match)
         return grandsBracket
 
-test = Bracket(7, 2)
+test = Bracket(17, 2)
 print(str(test))
 

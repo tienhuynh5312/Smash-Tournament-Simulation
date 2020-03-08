@@ -19,10 +19,10 @@ class Match(object):
 
     # To String method
     def __str__(self):
-        return "p1: " + str(self.p1id) + "-" +\
-               "p2: " + str(self.p2id) + "-" +\
-                "wp: " + str(self.wpath) + "-" +\
-                "lp:" + str(self.lpath) + "-"
+        return "p1: " + str(self.p1id) + " " +\
+               "p2: " + str(self.p2id) + " " +\
+                "wp: " + str(self.wpath) + " " +\
+                "lp:" + str(self.lpath) + " "
 
     # Returns whether or not this match can be run by the reporting station
     def canBeRun(self):
@@ -65,7 +65,6 @@ class Match(object):
         return self.lpath
 
     # TODO: Make time measurements accurate
-
     # Returns the amount of time the match takes
     def generateTime(self):
         sum = 0
