@@ -1,6 +1,7 @@
 # Smash-Tournament-Simulation
 ![Python application](https://github.com/tienhuynh5312/Smash-Tournament-Simulation/workflows/Python%20application/badge.svg)
 
+[Project estimation](https://github.com/boyter/scc)
 # Members
 Tien Huynh
 

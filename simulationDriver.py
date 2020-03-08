@@ -43,10 +43,15 @@ class SimulationDriver:
     TOTAL_PLAYER = 30
 
     ORGANIZER_LOCATIONS = [(30, 40)]
-    CONSOLE_LOCATIONS = [(0,1), (0,5), (0, 23)]
-    CONSOLE_LOCATIONS = {"horizontal": [(2,5), (0, 23)],
-                         "vertical": [(0,0)]}
-    CONSOLE_HORIZONTAL_SIZE = (2, 4) # console size when in horizontal size.
+    CONSOLE_LOCATIONS = [(0, 1), (0, 5), (0, 23)]
+    CONSOLE_LOCATIONS = {"horizontal": [(2, 5), (0, 23)],
+                         "vertical": [(0, 0)]}
+    CONSOLE_HORIZONTAL_SIZE = (2, 4)  # console size when in horizontal size.
+
+    PLAYER_SHOW_UP_LATE_PERCENT = 0.02
+    PLAYER_BATHROOM_PERCENT = 0.04
+    BATHROOM_DISTANCE = 101
+
     def __init__(self):
         """
         Initialize the simulation driver for stage 1 in the description.
