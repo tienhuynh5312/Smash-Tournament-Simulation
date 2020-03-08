@@ -32,7 +32,7 @@ class Match(object):
 
     # Returns whether or not the match is complete
     def isComplete(self):
-        return self.p1Wins == self.numVictory | self.p2Wins == self.numVictory
+        return (self.p1Wins == self.numVictory) | (self.p2Wins == self.numVictory)
 
     # Adds a player
     def addPlayer(self, player):
@@ -84,6 +84,7 @@ class Match(object):
         # Packing up controllers
         controllerTime = np.random.binomial(4, .5)
         sum = sum + controllerTime
+        return sum
 
     # ------------------------ Private Methods ----------------------
 
@@ -93,9 +94,9 @@ class Match(object):
     def __playMatch(self):
         matchTime = np.random.binomial(4, .5)
         if np.random.uniform(0, 1) < .5:
-            self.updateResult(1)
+            self.__updateResult(1)
         else:
-            self.updateResult(2)
+            self.__updateResult(2)
         return matchTime
 
     # Updates the result of this match

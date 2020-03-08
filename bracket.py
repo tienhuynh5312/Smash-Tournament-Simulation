@@ -22,7 +22,7 @@ class Bracket(object):
         self.numRounds = k
         self.wExtra = numPlayers - 2**(k - 1)
         j = 2**(k-1)
-        count = 1
+        count = 0
         while j > 1:
             j = j // 2
             count = count + 2
@@ -68,6 +68,8 @@ class Bracket(object):
             return self.WinnersRounds[round][matchNumber]
         elif (type == 1):
             return self.LosersRounds[round][matchNumber]
+        elif (type == 2):
+            return self.GrandFinals[round]
 
     def updatePlayer(self, matchInfo, player):
         if matchInfo == -1:
@@ -121,10 +123,9 @@ class Bracket(object):
         for i in range(1, self.numRounds):
             for j in range(2 ** (self.numRounds - 1 - i)):
                 wp = [0, i + 1, j // 2]
-                lp = [1, 2 * (i -1) + 1, j]
+                lp = [1, 2 * i - 1, j]
                 if i == self.numRounds - 1:
-                    wp = [2, i + 1, j // 2]
-                    lp = [1, 2 * (i - 1) + 1, j]
+                    wp = [2, 0, 0]
                 match = Match(wp, lp)
                 WinnersRounds[i].append(match)
         return WinnersRounds
@@ -141,36 +142,34 @@ class Bracket(object):
 
         # Create round 0 of matches
         for i in range(self.lExtra):
-            wp = [1, 1, i // 2]
+            wp = [1, 1, i]
             lp = -1
             match = Match(wp, lp)
             LosersRounds[0].append(match)
 
-        for i in range(self.lExtra, 2**(self.numRounds - 1)):
-            wp = [1, 1, (i + self.lExtra - 2) // 2]
+        for i in range(2**(self.numRounds - 2) - self.lExtra):
+            wp = [1, 1, (i + self.lExtra)]
             lp = -1
             match = Match(wp, lp)
             LosersRounds[0].append(match)
 
         # Generate the remaining losers matches
         for i in range(1, self.numLosersRounds):
-            for j in range(2**(self.numRounds - 1) // (2 ** ((i + 1) // 2))):
+            for j in range(2**(self.numRounds - 1) // (2 ** ((i + 2)// 2))):
                 wp = [1, i + 1, j // 2]
                 lp = -1
-                if (i % 2) == 1:
+                if (i % 2) == 0:
                     wp = [1, i + 1, j]
+                if i == self.numLosersRounds - 1:
+                    wp = [2, 0, 0]
                 match = Match(wp, lp)
-                # match = Match(wp, lp)
                 LosersRounds[i].append(match)
         return LosersRounds
 
+    #TODO: Implement grands resetting
     def __generateGrandsBracket(self):
         grandsBracket = []
         # Add Grand finals
         match = Match(-1, -1)
         grandsBracket.append(match)
         return grandsBracket
-
-test = Bracket(17, 2)
-print(str(test))
-

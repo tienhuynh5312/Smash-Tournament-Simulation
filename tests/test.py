@@ -46,19 +46,20 @@ def test_4():
     assert Player.total_players == 32
 
 def test_5():
-    pass
     test = Bracket(7, 2)
+    sum = 0
+    print(str(test))
+    while (not test.nextMatches.empty()):
+        matchId = test.nextMatches.get()[1]
+        test.nextMatches
+        print(matchId)
+        match = test.getMatch(matchId)
+        sum = sum + match.generateTime()
+        winner = match.getWinner()
+        loser = match.getLoser()
+        wp = match.getwpath()
+        lp = match.getlpath()
+        test.updatePlayer(wp, winner)
+        test.updatePlayer(lp, loser)
 
-    # while (test.nextMatches):
-    #     matchId = test.nextMatches.get()[1]
-    #     print(matchId)
-    #     match = test.getMatch(matchId)
-    #     print(match)
-    #     match.updateResult(1)
-    #     winner = match.getWinner()
-    #     loser = match.getLoser()
-    #     wp = match.getwpath()
-    #     lp = match.getlpath()
-    #     print(wp)
-    #     print(lp)
-    #     test.updatePlayer(wp, winner)
+    print(str(sum))
