@@ -47,18 +47,18 @@ def test_4():
 
 def test_5():
     pass
-    # test = Bracket(7, 2)
-    #
-    # while (test.nextMatches):
-    #     matchId = test.nextMatches.get()[1]
-    #     print(matchId)
-    #     match = test.getMatch(matchId)
-    #     print(match)
-    #     match.updateResult(1)
-    #     winner = match.getWinner()
-    #     loser = match.getLoser()
-    #     wp = match.getwpath()
-    #     lp = match.getlpath()
-    #     print(wp)
-    #     print(lp)
+    test = Bracket(7, 2)
+
+    while (test.nextMatches):
+        matchId = test.nextMatches.get()[1]
+        print(matchId)
+        match = test.getMatch(matchId)
+        print(match)
+        match.updateResult(1)
+        winner = match.getWinner()
+        loser = match.getLoser()
+        wp = match.getwpath()
+        lp = match.getlpath()
+        print(wp)
+        print(lp)
     #     test.updatePlayer(wp, winner)
