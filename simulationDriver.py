@@ -49,9 +49,9 @@ class SimulationDriver:
                          "vertical": [(0, 0)]}
     CONSOLE_HORIZONTAL_SIZE = (2, 4)  # console size when in horizontal size.
 
-    PLAYER_SHOW_UP_LATE_PERCENT = 0.03
-    PLAYER_BATHROOM_PERCENT = 0.05
-    BATHROOM_DISTANCE = 100
+    PLAYER_SHOW_UP_LATE_PERCENT = 0.02
+    PLAYER_BATHROOM_PERCENT = 0.04
+    BATHROOM_DISTANCE = 101
 
     def __init__(self):
         """
