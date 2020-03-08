@@ -40,23 +40,23 @@ class SimulationDriver:
     ALL_AREA_ROWS = WAITING_AREA_ROWS + CONSOLE_AREA_ROWS + WALL_ROWS
     ALL_AREA_COLS = 48
     NUMBER_OF_CONSOLES = 10
-    TOTAL_PLAYER = 30
+    TOTAL_PLAYERS = 30
 
-    ORGANIZER_LOCATIONS = [(30, 40)]
+    ORGANIZER_LOCATIONS = [(55, 45)]
     CONSOLE_LOCATIONS = [(0, 1), (0, 5), (0, 23)]
     CONSOLE_LOCATIONS = {"horizontal": [(2, 5), (0, 23)],
                          "vertical": [(0, 0)]}
     CONSOLE_HORIZONTAL_SIZE = (2, 4)  # console size when in horizontal size.
 
-    PLAYER_SHOW_UP_LATE_PERCENT = 0.02
-    PLAYER_BATHROOM_PERCENT = 0.04
+    PLAYER_SHOW_UP_LATE_PERCENT = 0.05
+    PLAYER_BATHROOM_PERCENT = 0.01
     BATHROOM_DISTANCE = 101
 
     def __init__(self):
         """
         Initialize the simulation driver for stage 1 in the description.
         """
-        self.total_initial_players = SimulationDriver.TOTAL_PLAYER
+        self.total_initial_players = SimulationDriver.TOTAL_PLAYERS
         self.console_rental_fee_per_hour = 10  # dollars
         self.player_admission_profit = 3  # dollars
         self.time_stamp = 0
@@ -94,7 +94,12 @@ class SimulationDriver:
         while True:
             # - Increase timeStamp by timeStep
             self.time_stamp = self.time_stamp + self.__time_step
+            for pid in self.players_list.keys():
+                player = self.players_list[pid]
+                if player.is_waiting:
+                    player.set_destination(SimulationDriver.ORGANIZER_LOCATIONS[0])
 
+                player.walk(self.environment)
             # - Call a pair of player to the reporting station
             # - If they are here:
             # -     Assign player to the consoles by location
@@ -108,7 +113,8 @@ class SimulationDriver:
             #       player.playAround()
 
             # - TODO: condition to end the outermost while loop
-            break
+            if self.time_stamp == 1000:
+                break
 
     def __report_tournament(self):
         pass

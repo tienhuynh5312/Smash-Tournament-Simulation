@@ -1,5 +1,5 @@
-DEBUG_MODE = True
 import numpy as np
+DEBUG_MODE = True
 
 
 def print_debug(str_in, end="\n"):
