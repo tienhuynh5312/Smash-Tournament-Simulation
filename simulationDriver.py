@@ -138,7 +138,7 @@ class SimulationDriver:
         total_profit = self.total_initial_players * self.player_admission_profit - self.get_console_rental_fee()
         return total_profit
 
-    def __generate_console_configuration(self):
+    def generate_console_configuration(self):
         def draw_console(size_tuple, horizontal=True):
             import numpy as np
             if horizontal:
@@ -164,7 +164,7 @@ class SimulationDriver:
             self.environment.env["occupied"][x1:x2, y1:y2] = 1
             self.environment.env["consoles"][x1:x2, y1:y2] = data
 
-    def __generate_players(self):
+    def generate_players(self):
         if SimulationDriver.WAITING_AREA_ROWS*SimulationDriver.ALL_AREA_COLS < SimulationDriver.TOTAL_PLAYERS:
             print_debug("Not enough room in the waiting area for all the players.")
             exit(0)
@@ -190,12 +190,12 @@ class SimulationDriver:
             self.players_list[i].current_location = random_location
             self.environment.set_occupied(random_location, "players")
 
-    def __generate_obstacles(self):
+    def generate_obstacles(self):
         pass
 
-    def __generate_report_stations(self):
+    def generate_report_stations(self):
         for organizer in SimulationDriver.ORGANIZER_LOCATIONS:
             self.environment.set_occupied(organizer, "organizers")
 
-    def __generate_environment(self):
+    def generate_environment(self):
         self.environment = Environment(SimulationDriver.ALL_AREA_ROWS, SimulationDriver.ALL_AREA_COLS)
