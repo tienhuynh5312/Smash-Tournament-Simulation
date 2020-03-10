@@ -59,10 +59,10 @@ class Bracket(object):
              string = string + str(i) + "\n"
         return string
 
-    def getMatch(self, matchInfo):
-        type = matchInfo[0]
-        round = matchInfo[1]
-        matchNumber = matchInfo[2]
+    def getMatch(self, matchId):
+        type = matchId[0]
+        round = matchId[1]
+        matchNumber = matchId[2]
 
         if (type == 0):
             return self.WinnersRounds[round][matchNumber]

@@ -2,7 +2,7 @@
 from environment import Environment
 from player import Player
 from visualize import Visualize
-
+from bracket import Bracket
 
 class SimulationDriver:
     """
@@ -74,6 +74,9 @@ class SimulationDriver:
         self.environment = None
         self.__generate_environment()
         self.env = self.environment.env
+
+        # - Create Bracket for the tournament
+        self.bracket = Bracket(SimulationDriver.TOTAL_PLAYERS, 2)
 
         # - TODO: place consoles
         self.__generate_console_configuration()

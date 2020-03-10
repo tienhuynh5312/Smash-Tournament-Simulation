@@ -41,6 +41,9 @@ class Match(object):
         elif self.p2id is None:
             self.p2id = player
 
+    def getPlayer(self):
+        return[self.p1id, self.p2id]
+
     # Returns the results of this match
     def getWinner(self):
         if (self.p1Wins == self.numVictory):
