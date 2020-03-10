@@ -1,6 +1,6 @@
 # - Import modules
 from environment import Environment
-from player import Player
+from Player import Player
 from visualize import Visualize
 
 
@@ -108,6 +108,7 @@ class SimulationDriver:
                 if player.destination_location is None:
                     player.set_destination(SimulationDriver.ORGANIZER_LOCATIONS[0])
 
+                self.environment.update()
                 player.walk(self.environment)
             # - Call a pair of player to the reporting station
             # - If they are here:
@@ -121,7 +122,7 @@ class SimulationDriver:
             # - if player.isRecentlyEliminated():
             #       player.playAround()
 
-            self.data[index_plot] = self.environment.env["players"]
+            self.data[index_plot] = self.environment.env["occupied"]
             index_plot = index_plot + 1
             # - TODO: condition to end the outermost while loop
             if self.time_stamp == SimulationDriver.SIM_DURATION:
