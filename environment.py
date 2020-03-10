@@ -37,7 +37,8 @@ class Environment:
         wall = np.ones(self.cols)
 
         # TODO: Improve generating door
-        wall[0:len(door)] = door
+        for d in SimulationDriver.DOOR_LOCATIONS:
+            wall[d[1]:(d[1]+len(door))] = door
 
         # Mark occupied
         self.__occupied_array[SimulationDriver.WALL_ROW, :] = wall
@@ -57,7 +58,9 @@ class Environment:
             self.env[env_string][location_tuple] = 0
 
     def move_occupied(self, location_origin_tuple, location_destination_tuple, env_string=None):
-        self.remove_occupied(location_origin_tuple)
+        from simulationDriver import SimulationDriver
+        if location_origin_tuple[0] != SimulationDriver.WALL_ROW:
+            self.remove_occupied(location_origin_tuple)
         self.set_occupied(location_destination_tuple)
         if env_string is not None:
             self.env[env_string][location_origin_tuple] = 0
