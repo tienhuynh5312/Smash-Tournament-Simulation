@@ -27,7 +27,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.gutterIcons" />
   </component>
   <component name="RunManager" selected="Python tests.pytest in test.py">
     <configuration name="__init__" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
@@ -181,21 +181,25 @@
     <state width="1154" height="687" key="GridCell.Tab.0.bottom" timestamp="1583664230065">
       <screen x="0" y="803" width="1200" height="1117" />
     </state>
+    <state width="1899" height="289" key="GridCell.Tab.0.bottom/0.23.1920.1003@0.23.1920.1003" timestamp="1583828835143" />
     <state width="1154" height="943" key="GridCell.Tab.0.bottom/1200.634.1920.1080/3120.634.1920.1080/0.661.1200.1259@0.661.1200.1259" timestamp="1583659807853" />
     <state width="1154" height="687" key="GridCell.Tab.0.bottom/1200.634.1920.1080/3120.634.1920.1080/0.803.1200.1117@0.803.1200.1117" timestamp="1583664230065" />
     <state width="1154" height="687" key="GridCell.Tab.0.center" timestamp="1583664230065">
       <screen x="0" y="803" width="1200" height="1117" />
     </state>
+    <state width="1899" height="289" key="GridCell.Tab.0.center/0.23.1920.1003@0.23.1920.1003" timestamp="1583828835143" />
     <state width="1154" height="943" key="GridCell.Tab.0.center/1200.634.1920.1080/3120.634.1920.1080/0.661.1200.1259@0.661.1200.1259" timestamp="1583659807853" />
     <state width="1154" height="687" key="GridCell.Tab.0.center/1200.634.1920.1080/3120.634.1920.1080/0.803.1200.1117@0.803.1200.1117" timestamp="1583664230065" />
     <state width="1154" height="687" key="GridCell.Tab.0.left" timestamp="1583664230065">
       <screen x="0" y="803" width="1200" height="1117" />
     </state>
+    <state width="1899" height="289" key="GridCell.Tab.0.left/0.23.1920.1003@0.23.1920.1003" timestamp="1583828835142" />
     <state width="1154" height="943" key="GridCell.Tab.0.left/1200.634.1920.1080/3120.634.1920.1080/0.661.1200.1259@0.661.1200.1259" timestamp="1583659807853" />
     <state width="1154" height="687" key="GridCell.Tab.0.left/1200.634.1920.1080/3120.634.1920.1080/0.803.1200.1117@0.803.1200.1117" timestamp="1583664230065" />
     <state width="1154" height="687" key="GridCell.Tab.0.right" timestamp="1583664230065">
       <screen x="0" y="803" width="1200" height="1117" />
     </state>
+    <state width="1899" height="289" key="GridCell.Tab.0.right/0.23.1920.1003@0.23.1920.1003" timestamp="1583828835143" />
     <state width="1154" height="943" key="GridCell.Tab.0.right/1200.634.1920.1080/3120.634.1920.1080/0.661.1200.1259@0.661.1200.1259" timestamp="1583659807853" />
     <state width="1154" height="687" key="GridCell.Tab.0.right/1200.634.1920.1080/3120.634.1920.1080/0.803.1200.1117@0.803.1200.1117" timestamp="1583664230065" />
     <state width="1154" height="687" key="GridCell.Tab.1.bottom" timestamp="1583664230065">
@@ -221,6 +225,7 @@
     <state x="89" y="595" width="1022" height="737" key="SettingsEditor" timestamp="1583375729307">
       <screen x="0" y="661" width="1200" height="1259" />
     </state>
+    <state x="1020" y="23" width="900" height="1002" key="SettingsEditor/0.23.1920.1003@0.23.1920.1003" timestamp="1583825407568" />
     <state x="89" y="595" width="1022" height="737" key="SettingsEditor/1200.634.1920.1080/3120.634.1920.1080/0.661.1200.1259@0.661.1200.1259" timestamp="1583375729307" />
     <state x="256" y="787" key="com.intellij.ide.util.TipDialog" timestamp="1583865688756">
       <screen x="0" y="661" width="1200" height="1259" />

@@ -11,9 +11,9 @@ np.set_printoptions(threshold=sys.maxsize)
 def test_1():
     assert 1 + 1 == 2, "Test Passed"
 
-
 def test_2():
-    SimulationDriver.TOTAL_PLAYERS = 10
+    SimulationDriver.TOTAL_PLAYERS = 100
+    SimulationDriver.SIM_DURATION = 1000
     x = SimulationDriver()
     x.begin()
     print(x.environment.env["players"])
