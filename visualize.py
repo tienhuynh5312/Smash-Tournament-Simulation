@@ -12,8 +12,8 @@ class Visualize:
         fig = plt.figure(figsize=(5, 5))
         shape = data_3d.shape
         combine = np.zeros((shape[1], shape[2]))
-        combine = env["consoles"]*0.5 + env["organizers"]*0.5
-        combine[SimulationDriver.WALL_ROW] = env["occupied"][SimulationDriver.WALL_ROW]*3
+        combine = env["players"]*0.3
+        combine[SimulationDriver.WALL_ROW] = env["occupied"][SimulationDriver.WALL_ROW]*10
         data = data_3d[0] + combine
         ax = fig.add_axes((0, 0, 1, 1), frameon=False)
         img = ax.imshow(data, interpolation='none',
@@ -21,7 +21,7 @@ class Visualize:
                         aspect="auto",
                         zorder=0)
         for data in data_3d:
-            combine = env["consoles"] * 0.3 + env["organizers"] * 0.2
+            combine = env["players"]*0.3
             combine[SimulationDriver.WALL_ROW] = env["occupied"][SimulationDriver.WALL_ROW] * 10
             data1 = data + combine
             img.set_data(data1)

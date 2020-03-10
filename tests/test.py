@@ -2,7 +2,7 @@ import pytest
 
 from simulationDriver import SimulationDriver
 from environment import Environment
-from player import Player
+from Player import Player
 from bracket import Bracket
 import numpy as np
 import sys
