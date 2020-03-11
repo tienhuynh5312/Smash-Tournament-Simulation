@@ -1,6 +1,6 @@
 # - Import modules
 from environment import Environment
-from player import Player
+from Player import Player
 from visualize import Visualize
 from bracket import Bracket
 
@@ -93,9 +93,8 @@ class SimulationDriver:
 
         # - TODO: place players
         self.__generate_players()
-
-        self.data = np.zeros((int(SimulationDriver.SIM_DURATION / SimulationDriver.TIME_STEP), \
-                              SimulationDriver.ALL_AREA_ROWS, SimulationDriver.ALL_AREA_COLS))
+        self.environment.update
+        self.data = []
 
     def begin(self, visual=False):
         """Begin the simulation"""
@@ -165,10 +164,10 @@ class SimulationDriver:
             x2 = x1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[0]
             y1 = console[1]
             y2 = y1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[1]
-            #If the console fits on the table
-            if (np.all(self.environment.env["tables"][x1:x2, y1:y2])):
-                self.environment.env["occupied"][x1:x2, y1:y2] = data
-                self.environment.env["consoles"][x1:x2, y1:y2] = data
+            # # If the console fits on the table
+            # if np.all(self.environment.env["tables"][x1:x2, y1:y2]):
+            #     self.environment.env["occupied"][x1:x2, y1:y2] = data
+            #     self.environment.env["consoles"][x1:x2, y1:y2] = data
 
         data = draw_console(SimulationDriver.CONSOLE_HORIZONTAL_SIZE, False)
 
@@ -177,10 +176,10 @@ class SimulationDriver:
             x2 = x1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[1]
             y1 = console[1]
             y2 = y1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[0]
-            #If the console fits on the table
-            if (np.all(self.environment.env["tables"][x1:x2, y1:y2])):
-                self.environment.env["occupied"][x1:x2, y1:y2] = data
-                self.environment.env["consoles"][x1:x2, y1:y2] = data
+            # #I f the console fits on the table
+            # if np.all(self.environment.env["tables"][x1:x2, y1:y2]):
+            #     self.environment.env["occupied"][x1:x2, y1:y2] = data
+            #     self.environment.env["consoles"][x1:x2, y1:y2] = data
 
     def __generate_players(self):
         import numpy as np

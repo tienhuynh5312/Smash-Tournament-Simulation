@@ -189,7 +189,7 @@ class Player:
                 print_debug(f"Can't walk.")
                 continue
 
-            if self.is_here(to_door=walk2door()):
+            if self.is_here():
                 print_debug(f"player id {self.player_id} is here at {self.destination_location}")
                 break
 
