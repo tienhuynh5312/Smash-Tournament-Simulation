@@ -58,11 +58,14 @@ class Bracket(object):
         for i in self.GrandFinals:
              string = string + str(i) + "\n"
         return string
+    #TODO:
+    def isOver(self):
+        return numAlive == 1
 
-    def getMatch(self, matchInfo):
-        type = matchInfo[0]
-        round = matchInfo[1]
-        matchNumber = matchInfo[2]
+    def getMatch(self, matchId):
+        type = matchId[0]
+        round = matchId[1]
+        matchNumber = matchId[2]
 
         if (type == 0):
             return self.WinnersRounds[round][matchNumber]

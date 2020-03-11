@@ -20,6 +20,7 @@ class Environment:
 
         self.__wall_array = np.ones((m, n))
 
+
         # insert array into one env hashtable for easy access
         self.env = {"occupied": self.__occupied_array,
                     "organizers": self.__organizers_array,

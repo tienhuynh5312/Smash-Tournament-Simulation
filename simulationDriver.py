@@ -1,8 +1,8 @@
 # - Import modules
 from environment import Environment
-from Player import Player
+from player import Player
 from visualize import Visualize
-
+from bracket import Bracket
 
 class SimulationDriver:
     """
@@ -56,6 +56,9 @@ class SimulationDriver:
     BATHROOM_DISTANCE = 101
     SIM_DURATION = 10  # seconds
 
+    #Table params: Table_x, Table_y. (x, y) is lower left corner
+    TABLE_LOCATIONS = [(10,12)]
+
     def __init__(self):
         """
         Initialize the simulation driver for stage 1 in the description.
@@ -74,6 +77,9 @@ class SimulationDriver:
         self.environment = None
         self.__generate_environment()
         self.env = self.environment.env
+
+        # - Create Bracket for the tournament
+        self.bracket = Bracket(SimulationDriver.TOTAL_PLAYERS, 2)
 
         # - TODO: place consoles
         self.__generate_console_configuration()
@@ -165,6 +171,7 @@ class SimulationDriver:
         total_profit = SimulationDriver.TOTAL_PLAYERS * self.player_admission_profit - self.get_console_rental_fee()
         return total_profit
 
+    #Cannot place console unless it is on a table
     def __generate_console_configuration(self):
         pass
 
@@ -197,3 +204,18 @@ class SimulationDriver:
 
     def __generate_environment(self):
         self.environment = Environment(SimulationDriver.ALL_AREA_ROWS, SimulationDriver.ALL_AREA_COLS)
+
+    # size_tuple = (width, height)
+    def __generate_table(self, size_tuple):
+        import numpy as np
+        
+        table = np.ones(size_tuple)
+
+        for tables in SimulationDriver.TABLE_LOCATIONS:
+            # self.environment.set_occupied(tables, )
+            x1 = tables[0]
+            x2 = x1 + size_tuple[0]
+            y1 = tables[1]
+            y2 = y1 + size_tuple[1]
+            self.environment.env["occupied"][x1:x2, y1:y2] = table
+            self.environment.env["tables"][x1:x2, y1:y2] = table
