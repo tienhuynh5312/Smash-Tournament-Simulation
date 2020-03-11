@@ -1,6 +1,6 @@
 # - Import modules
 from environment import Environment
-from player import Player
+from Player import Player
 from visualize import Visualize
 from bracket import Bracket
 
