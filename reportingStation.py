@@ -19,10 +19,12 @@ class ReportingStation:
         self.isWaiting = False
         self.numWaiting = 0
 
+    # sets the amount of time that the reporting station is occupied for
     def set_busy_time(self, busy_time=0):
         self.busy_time = busy_time
         print_debug(f"set Reporting Station {self.Stationid} busy for {self.busy_time}")
 
+    # Method that checks whether the reporting station can perform other action
     def is_busy(self, duration=1, env=None):
         self.busy_time = self.busy_time - duration
         if self.isWaiting:
@@ -31,7 +33,7 @@ class ReportingStation:
             print_debug(f"Reporting Station{self.Stationid} is talking to someone right now")
         else:
             if env is not None:
-                env.set_occupied(self.current_location, "players")
+                env.set_occupied(self.current_location, "organizers")
             print_debug(f"Player {self.Stationid} is free")
         return self.busy_time > 0
 
@@ -41,7 +43,8 @@ class ReportingStation:
         # Checks to see if console + match is available
         openConsoles = np.where(self.consoles == True)[0]
         if (not self.bracket.nextMatches.empty()) & (len(openConsoles) > 0):
-            matchInfo = self.bracket.getMatch()
+            matchIndex = self.bracket.nextMatches.get()[1]
+            matchInfo = self.bracket.getMatch(matchIndex)
             console = openConsoles[0]
             self.consoles[console] = False
             print("Wow match can be played")
@@ -49,13 +52,12 @@ class ReportingStation:
 
     # Accepts the result of a match and updates the
     # bracket and the console status
-    def updateBracket(self, matchId, consoleId):
+    def updateBracket(self, match, consoleId):
         self.set_busy_time(30)
-        matchInfo = self.bracket.getMatch(matchId)
-        winner = matchInfo.getWinner()
-        loser = matchInfo.getLoser()
-        wp = matchInfo.getwpath()
-        lp = matchInfo.getlpath()
+        winner = match.getWinner()
+        loser = match.getLoser()
+        wp = match.getwpath()
+        lp = match.getlpath()
 
         # Update the winner of the match
         self.bracket.updatePlayer(wp, winner)

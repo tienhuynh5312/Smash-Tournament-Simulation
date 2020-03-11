@@ -1,6 +1,6 @@
 # - Import modules
 from environment import Environment
-from Player import Player
+from player import Player
 from visualize import Visualize
 from bracket import Bracket
 
@@ -36,7 +36,7 @@ class SimulationDriver:
 
     WAITING_AREA_ROWS = 48
     CONSOLE_AREA_ROWS = 24
-    WALL_ROW = CONSOLE_AREA_ROWS  # which row we place the wall
+    WALL_ROW = CONSOLE_AREA_ROWS + 1  # which row we place the wall
     WALL_ROWS = 1
     ALL_AREA_ROWS = WAITING_AREA_ROWS + CONSOLE_AREA_ROWS + WALL_ROWS
     ALL_AREA_COLS = 48
@@ -46,15 +46,16 @@ class SimulationDriver:
     # DOOR_LOCATIONS = [(WALL_ROW, 0), (WALL_ROW, 10), (WALL_ROW, 15)]
     DOOR_LOCATIONS = [(WALL_ROW, 20)]
     ORGANIZER_LOCATIONS = [(10, 45)]
+
     CONSOLE_LOCATIONS = [(0, 1), (0, 5), (0, 23)]
     CONSOLE_LOCATIONS = {"horizontal": [(2, 5), (0, 23), (3,25)],
                          "vertical": [(0, 0), (5, 5), (5,40), (0,40), (10, 40), (17, 40)]}
     CONSOLE_HORIZONTAL_SIZE = (1, 3)  # console size when in horizontal size.
 
-    PLAYER_SHOW_UP_LATE_PERCENT = 0.00
-    PLAYER_BATHROOM_PERCENT = 0.000
+    PLAYER_SHOW_UP_LATE_PERCENT = 0.05
+    PLAYER_BATHROOM_PERCENT = 0.01
     BATHROOM_DISTANCE = 101
-    SIM_DURATION = 10  # seconds
+    SIM_DURATION = 100  # seconds
 
     #Table params: Table_x, Table_y. (x, y) is lower left corner
     TABLE_LOCATIONS = [(10,12)]
@@ -87,12 +88,14 @@ class SimulationDriver:
         # - TODO: place reporting station(s)
         self.__generate_report_stations()
 
+        # - TODO: place unreachable areas, aka wall, etc
+        self.__generate_obstacles()
+
         # - TODO: place players
         self.__generate_players()
 
-        self.environment.update()
-        self.data = []
-        print(self.environment.env["occupied"])
+        self.data = np.zeros((int(SimulationDriver.SIM_DURATION / SimulationDriver.TIME_STEP), \
+                              SimulationDriver.ALL_AREA_ROWS, SimulationDriver.ALL_AREA_COLS))
 
     def begin(self, visual=False):
         """Begin the simulation"""
@@ -104,7 +107,7 @@ class SimulationDriver:
     def __start_tournament(self):
         import numpy as np
         # - TODO: Run the tournament
-
+        index_plot = 0
         while True:
             # - Increase timeStamp by timeStep
             for pid in self.players_list.keys():
@@ -112,6 +115,7 @@ class SimulationDriver:
                 if player.destination_location is None:
                     player.set_destination(SimulationDriver.ORGANIZER_LOCATIONS[0])
 
+                self.environment.update()
                 player.walk(self.environment)
             # - Call a pair of player to the reporting station
             # - If they are here:
@@ -147,13 +151,42 @@ class SimulationDriver:
 
     #Cannot place console unless it is on a table
     def __generate_console_configuration(self):
-        pass
+        import numpy as np
+        def draw_console(size_tuple, horizontal=True):
+            if horizontal:
+                return np.ones(size_tuple)
+            else:
+                return np.transpose(np.ones(size_tuple))
+
+        data = draw_console(SimulationDriver.CONSOLE_HORIZONTAL_SIZE)
+
+        for console in SimulationDriver.CONSOLE_LOCATIONS["horizontal"]:
+            x1 = console[0]
+            x2 = x1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[0]
+            y1 = console[1]
+            y2 = y1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[1]
+            #If the console fits on the table
+            if (np.all(self.environment.env["tables"][x1:x2, y1:y2])):
+                self.environment.env["occupied"][x1:x2, y1:y2] = data
+                self.environment.env["consoles"][x1:x2, y1:y2] = data
+
+        data = draw_console(SimulationDriver.CONSOLE_HORIZONTAL_SIZE, False)
+
+        for console in SimulationDriver.CONSOLE_LOCATIONS["vertical"]:
+            x1 = console[0]
+            x2 = x1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[1]
+            y1 = console[1]
+            y2 = y1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[0]
+            #If the console fits on the table
+            if (np.all(self.environment.env["tables"][x1:x2, y1:y2])):
+                self.environment.env["occupied"][x1:x2, y1:y2] = data
+                self.environment.env["consoles"][x1:x2, y1:y2] = data
 
     def __generate_players(self):
         import numpy as np
         self.players_list = {}
         # - Set the location of the player randomly
-        row_min = SimulationDriver.WALL_ROW
+        row_min = SimulationDriver.WALL_ROW + 1
         row_max = SimulationDriver.ALL_AREA_ROWS
         col_min = 0
         col_max = SimulationDriver.ALL_AREA_COLS
@@ -171,6 +204,9 @@ class SimulationDriver:
 
             self.players_list[i].current_location = random_location
             self.environment.set_occupied(random_location, "players")
+
+    def __generate_obstacles(self):
+        pass
 
     def __generate_report_stations(self):
         for organizer in SimulationDriver.ORGANIZER_LOCATIONS:

@@ -60,7 +60,7 @@ class Bracket(object):
         return string
     #TODO:
     def isOver(self):
-        return numAlive == 1
+        return self.numAlive == 1
 
     def getMatch(self, matchId):
         type = matchId[0]
@@ -76,9 +76,10 @@ class Bracket(object):
 
     def updatePlayer(self, matchInfo, player):
         if matchInfo == -1:
-            self.numAlive = self.numAlive - 1
-            self.numEliminated = self.numEliminated + 1
-        else:
+            if player != -1:
+                self.numAlive = self.numAlive - 1
+                self.numEliminated = self.numEliminated + 1
+        elif matchInfo != 1:
             type = matchInfo[0]
             round = matchInfo[1]
             matchNumber = matchInfo[2]
@@ -173,6 +174,6 @@ class Bracket(object):
     def __generateGrandsBracket(self):
         grandsBracket = []
         # Add Grand finals
-        match = Match(-1, -1)
+        match = Match(1, -1)
         grandsBracket.append(match)
         return grandsBracket
