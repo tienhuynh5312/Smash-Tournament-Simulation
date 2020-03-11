@@ -102,15 +102,27 @@ class Player:
         def walk2door():
             a = self.current_location[0] - SimulationDriver.WALL_ROW
             b = self.destination_location[0] - SimulationDriver.WALL_ROW
-            if a*b <= 0:
+            if a*b < 0:
                 print_debug("Switching area. Need to go to door")
                 return True
             else:
                 return False
 
+        def get_closest_door():
+            index = 0
+            min_distance = 9999999999
+            for loc in range(len(SimulationDriver.DOOR_LOCATIONS)):
+                dis = distance(SimulationDriver.DOOR_LOCATIONS[loc], self.current_location)
+
+                if dis < min_distance:
+                    index = loc
+
+            return loc
+
         def get_new_location(bias=(0, 0), to_door=False):
-            which_door = np.random.randint(0, len(SimulationDriver.DOOR_LOCATIONS))
             if to_door:
+                which_door = get_closest_door()
+                print(f"this door = {which_door}")
                 door = SimulationDriver.DOOR_LOCATIONS[which_door]
                 direction_vector = (door[0] - self.current_location[0],
                                     door[1] - self.current_location[1])
@@ -130,6 +142,7 @@ class Player:
 
             # bias walk
             direction_choice = np.random.random()
+
             row_location = self.current_location[0] + bias[0]
             col_location = self.current_location[1] + bias[1]
 
@@ -176,7 +189,7 @@ class Player:
                 print_debug(f"Can't walk.")
                 continue
 
-            if self.is_here(to_door=walk2door()):
+            if self.is_here():
                 print_debug(f"player id {self.player_id} is here at {self.destination_location}")
                 break
 
@@ -186,7 +199,7 @@ class Player:
                 try_timeout = try_timeout - 1
                 if try_timeout < 0:
                     print_debug(
-                        f"Cannot find a way {new_row_location, new_col_location}. Wait here {self.current_location}")
+                        f"Cannot find a way {new_row_location, new_col_location}. Wait here {self.current_location}->{self.destination_location}")
                     break
 
                 new_row_location, new_col_location = get_new_location(to_door=walk2door())
@@ -198,8 +211,7 @@ class Player:
                 self.walking_distance = self.walking_distance + 1
                 env.update()
 
-    def set_destination(self, location_tuple=(0, 0)):
-        from simulationDriver import SimulationDriver
+    def set_destination(self, location_tuple):
         self.destination_location = location_tuple
 
     def is_eliminated(self):

@@ -18,6 +18,8 @@ class Environment:
 
         self.__players_array = np.zeros((m, n))
 
+        self.__tables_array = np.zeros((m, n))
+
         self.__wall_array = np.ones((m, n))
 
 
@@ -26,6 +28,7 @@ class Environment:
                     "organizers": self.__organizers_array,
                     "consoles": self.__consoles_array,
                     "players": self.__players_array,
+                    "tables": self.__tables_array,
                     "wall": self.__wall_array}
 
         self.__generate_wall()
