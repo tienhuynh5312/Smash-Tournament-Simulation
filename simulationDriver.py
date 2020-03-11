@@ -2,7 +2,10 @@
 from environment import Environment
 from Player import Player
 from visualize import Visualize
+from reportingStation import ReportingStation
 from bracket import Bracket
+
+import numpy as np
 
 class SimulationDriver:
     """
@@ -40,7 +43,7 @@ class SimulationDriver:
     WALL_ROWS = 1
     ALL_AREA_ROWS = WAITING_AREA_ROWS + CONSOLE_AREA_ROWS + WALL_ROWS
     ALL_AREA_COLS = 48
-    NUMBER_OF_CONSOLES = 10
+    NUMBER_OF_CONSOLES = 3
     TOTAL_PLAYERS = 30
 
     # DOOR_LOCATIONS = [(WALL_ROW, 0), (WALL_ROW, 10), (WALL_ROW, 15)]
@@ -92,13 +95,17 @@ class SimulationDriver:
 
         self.environment.update()
         self.data = []
+
+        # TODO: Temporry single organizer
+        self.Organizer = ReportingStation(self.bracket, 1, SimulationDriver.ORGANIZER_LOCATIONS[0], 5)
         print(self.environment.env["occupied"])
 
     def begin(self):
         """Begin the simulation"""
         self.__start_tournament()
-        self.__report_tournament()
+        #Temporarily removed to make running test cases faster
         Visualize.plot_3d(self.data, self.environment.env)
+        return(self.__report_tournament())
 
     def __start_tournament(self):
         import numpy as np
@@ -110,7 +117,8 @@ class SimulationDriver:
             for pid in self.players_list.keys():
                 player = self.players_list[pid]
                 if player.destination_location is None:
-                    player.set_destination(SimulationDriver.ORGANIZER_LOCATIONS[0])
+                    # player.set_destination(SimulationDriver.ORGANIZER_LOCATIONS[0])
+                    player.set_destination([10, 10])
 
                 player.walk(self.environment)
             # - Call a pair of player to the reporting station
@@ -136,10 +144,25 @@ class SimulationDriver:
             self.time_stamp = self.time_stamp + self.__time_step
             for pid in self.players_list.keys():
                 player = self.players_list[pid]
-                if player.destination_location is None:
-                    player.set_destination((35, 45))
+                # if player.destination_location is None:
+                #     player.set_destination((35, 45))
 
                 player.walk(self.environment)
+
+                # Run any available matches
+                if (not self.bracket.nextMatches.empty()) & (not self.Organizer.is_busy()):
+                    match = self.Organizer.callPlayers()
+                    player.set_destination(self.Organizer.current_location)
+                    match[0].generateTime()
+                    self.Organizer.updateBracket(match[0], match[1])
+                print(self.bracket.numAlive)
+
+                # Organizer will call matches
+                if self.Organizer.isWaiting:
+                    p1id = self.Organizer.currentP1
+                    p2id = self.Organizer.currentP2
+                    self.__TalkToPlayers(p1id, p2id)
+
             # - Call a pair of player to the reporting station
             # - If they are here:
             # -     Assign player to the consoles by location
@@ -157,9 +180,30 @@ class SimulationDriver:
             # - TODO: condition to end the outermost while loop
             if self.time_stamp >= SimulationDriver.SIM_DURATION*2:
                 break
+            if self.bracket.isOver():
+                return self.time_stamp
 
     def __report_tournament(self):
-        pass
+        return self.time_stamp
+
+    def __TalkToPlayers(self, p1id, p2id):
+        oLocation = np.array(self.Organizer.current_location)
+
+        if p1id is not None:
+            p1 = self.players_list[p1id]
+            p1Location = np.array(p1.current_location)
+            if (oLocation - p1Location <= [1, 1]) | (oLocation - p1Location >= [1, 1]):
+                self.Organizer.receivePlayer(p1id)
+                # Move player to the console and have them play their match
+                p1.set_match(self.Organizer.currentMatch, self.CONSOLE_LOCATIONS[self.Organizer.currentConsole])
+
+        if p2id is not None:
+            p2 = self.players_list[p2id]
+            p2Location = np.array(p2.current_location)
+            if (oLocation - p2Location <= [1, 1]) | (oLocation - p2Location >= [1, 1]):
+                self.Organizer.receivePlayer(p2id)
+                # Move player to the console and have them play their match
+                p2.set_destination(self.CONSOLE_LOCATIONS[self.Organizer.currentConsole])
 
     def get_console_rental_fee(self):
         if self.time_stamp == 0:

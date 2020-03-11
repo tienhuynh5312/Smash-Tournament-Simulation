@@ -12,6 +12,8 @@ class Match(object):
         self.wpath = wpath
         self.lpath = lpath
         self.numVictory = 2
+        self.matchTime = self.generateTime()
+        self.playersNeeded = 2
         if isB05:
             self.numVictory = 3
 
@@ -87,7 +89,11 @@ class Match(object):
         # Packing up controllers
         controllerTime = np.random.binomial(4, .5)
         sum = sum + controllerTime
+        self.matchTime = sum
         return sum
+
+    def playerArrived(self):
+        self.playersNeeded = self.playersNeeded - 1
 
     # ------------------------ Private Methods ----------------------
 

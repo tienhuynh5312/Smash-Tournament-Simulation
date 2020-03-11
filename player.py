@@ -27,6 +27,8 @@ class Player:
         self.set_busy_time(Player.init_showup_late_time(SimulationDriver.PLAYER_SHOW_UP_LATE_PERCENT))  # seconds
         self.current_location = None
         self.destination_location = None
+        self.playTime = 0
+        self.match = None
 
     def __del__(self):
         Player.total_players = Player.total_players - 1
@@ -232,3 +234,13 @@ class Player:
         else:
             # - now let the player move around for fun.
             pass
+
+    # Sets the match location of the
+    def set_match(self, match, consoleLocation):
+        self.set_destination(consoleLocation)
+        self.match = match
+        self.playTime = match.matchTime
+
+    def report_match(self, OrganizerLocation):
+        # Walk to the organizer
+        self.set_destination(OrganizerLocation)

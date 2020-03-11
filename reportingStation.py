@@ -18,6 +18,10 @@ class ReportingStation:
         self.destination_location = None
         self.isWaiting = False
         self.numWaiting = 0
+        self.currentMatch = None
+        self.currentP1 = None
+        self.currentP2 = None
+        self.currentConsole = None
 
     # sets the amount of time that the reporting station is occupied for
     def set_busy_time(self, busy_time=0):
@@ -43,10 +47,12 @@ class ReportingStation:
         # Checks to see if console + match is available
         openConsoles = np.where(self.consoles == True)[0]
         if (not self.bracket.nextMatches.empty()) & (len(openConsoles) > 0):
+            self.isWaiting = True
             matchIndex = self.bracket.nextMatches.get()[1]
             matchInfo = self.bracket.getMatch(matchIndex)
             console = openConsoles[0]
             self.consoles[console] = False
+            self.currentConsole = console
             print("Wow match can be played")
             return(matchInfo, console)
 
@@ -67,6 +73,13 @@ class ReportingStation:
         self.consoles[consoleId] = True
 
     def receivePlayer(self, playerID):
-        return 1
+        if self.currentP1 == playerID:
+            self.currentP1 = None
+        if self.currentP2 == playerID:
+            self.currentP2 = None
+        if (self.currentP1 is None) & (self.currentP2 is None):
+            self.isWaiting = False
+        return [self.currentMatch, self.currentConsole]
+
 
 
