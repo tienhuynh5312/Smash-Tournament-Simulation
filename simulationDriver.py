@@ -32,7 +32,7 @@ class SimulationDriver:
     """
     TIME_STEP = 4  # second
     SIDE_LENGTH = 1  # ft
-    DOOR_LENGTH = 5
+    DOOR_LENGTH = 3
 
     WAITING_AREA_ROWS = 48
     CONSOLE_AREA_ROWS = 24
@@ -44,7 +44,7 @@ class SimulationDriver:
     TOTAL_PLAYERS = 30
 
     # DOOR_LOCATIONS = [(WALL_ROW, 0), (WALL_ROW, 10), (WALL_ROW, 15)]
-    DOOR_LOCATIONS = [(WALL_ROW, 0)]
+    DOOR_LOCATIONS = [(WALL_ROW, 20)]
     ORGANIZER_LOCATIONS = [(10, 45)]
     CONSOLE_LOCATIONS = [(0, 1), (0, 5), (0, 23)]
     CONSOLE_LOCATIONS = {"horizontal": [(2, 5), (0, 23), (3,25)],
@@ -94,11 +94,12 @@ class SimulationDriver:
         self.data = []
         print(self.environment.env["occupied"])
 
-    def begin(self):
+    def begin(self, visual=False):
         """Begin the simulation"""
         self.__start_tournament()
         self.__report_tournament()
-        Visualize.plot_3d(self.data, self.environment.env)
+        if visual:
+            Visualize.plot_3d(self.data, self.environment.env)
 
     def __start_tournament(self):
         import numpy as np
@@ -106,7 +107,6 @@ class SimulationDriver:
 
         while True:
             # - Increase timeStamp by timeStep
-            self.time_stamp = self.time_stamp + self.__time_step
             for pid in self.players_list.keys():
                 player = self.players_list[pid]
                 if player.destination_location is None:
@@ -128,36 +128,10 @@ class SimulationDriver:
             # snapshot
             self.data.append((self.time_stamp, np.array(self.environment.env["players"])))
             # - TODO: condition to end the outermost while loop
-            if self.time_stamp >= SimulationDriver.SIM_DURATION:
-                break
-
-        while True:
-            # - Increase timeStamp by timeStep
             self.time_stamp = self.time_stamp + self.__time_step
-            for pid in self.players_list.keys():
-                player = self.players_list[pid]
-                if player.destination_location is None:
-                    player.set_destination((35, 45))
-
-                player.walk(self.environment)
-            # - Call a pair of player to the reporting station
-            # - If they are here:
-            # -     Assign player to the consoles by location
-            # - else: wait by keep going the execution (waiting time)
-
-            # - for other players not getting called
-            # - make them move randomly. player.moveRandom()
-
-            # if player just get eliminated, give them a staying time:
-            # - if player.isRecentlyEliminated():
-            #       player.playAround()
-
-            # snapshot
-            self.data.append((self.time_stamp, np.array(self.environment.env["occupied"])))
-            # - TODO: condition to end the outermost while loop
-            if self.time_stamp >= SimulationDriver.SIM_DURATION*2:
+            if self.time_stamp > SimulationDriver.SIM_DURATION:
                 break
-
+                
     def __report_tournament(self):
         pass
 
