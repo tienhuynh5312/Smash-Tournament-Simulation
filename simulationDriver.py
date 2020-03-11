@@ -1,6 +1,6 @@
 # - Import modules
 from environment import Environment
-from Player import Player
+from player import Player
 from visualize import Visualize
 from bracket import Bracket
 
@@ -55,6 +55,9 @@ class SimulationDriver:
     PLAYER_BATHROOM_PERCENT = 0.01
     BATHROOM_DISTANCE = 101
     SIM_DURATION = 100  # seconds
+
+    #Table params: Table_x, Table_y. (x, y) is lower left corner
+    TABLE_LOCATIONS = [(10,12)]
 
     def __init__(self):
         """
@@ -144,6 +147,7 @@ class SimulationDriver:
         total_profit = SimulationDriver.TOTAL_PLAYERS * self.player_admission_profit - self.get_console_rental_fee()
         return total_profit
 
+    #Cannot place console unless it is on a table
     def __generate_console_configuration(self):
         def draw_console(size_tuple, horizontal=True):
             import numpy as np
@@ -153,22 +157,28 @@ class SimulationDriver:
                 return np.transpose(np.ones(size_tuple))
 
         data = draw_console(SimulationDriver.CONSOLE_HORIZONTAL_SIZE)
+
         for console in SimulationDriver.CONSOLE_LOCATIONS["horizontal"]:
             x1 = console[0]
             x2 = x1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[0]
             y1 = console[1]
             y2 = y1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[1]
-            self.environment.env["occupied"][x1:x2, y1:y2] = data
-            self.environment.env["consoles"][x1:x2, y1:y2] = data
+            #If the console fits on the table
+            if (self.environment.env["tables"][x1:x2, y1:y2] == 1):
+                self.environment.env["occupied"][x1:x2, y1:y2] = data
+                self.environment.env["consoles"][x1:x2, y1:y2] = data
 
         data = draw_console(SimulationDriver.CONSOLE_HORIZONTAL_SIZE, False)
+
         for console in SimulationDriver.CONSOLE_LOCATIONS["vertical"]:
             x1 = console[0]
             x2 = x1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[1]
             y1 = console[1]
             y2 = y1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[0]
-            self.environment.env["occupied"][x1:x2, y1:y2] = data
-            self.environment.env["consoles"][x1:x2, y1:y2] = data
+            #If the console fits on the table
+            if (self.environment.env["tables"][x1:x2, y1:y2] == 1):
+                self.environment.env["occupied"][x1:x2, y1:y2] = data
+                self.environment.env["consoles"][x1:x2, y1:y2] = data
 
     def __generate_players(self):
         import numpy as np
@@ -202,3 +212,18 @@ class SimulationDriver:
 
     def __generate_environment(self):
         self.environment = Environment(SimulationDriver.ALL_AREA_ROWS, SimulationDriver.ALL_AREA_COLS)
+
+    # size_tuple = (width, height)
+    def __generate_table(self, size_tuple):
+        import numpy as np
+        
+        table = np.ones(size_tuple)
+
+        for tables in SimulationDriver.TABLE_LOCATIONS:
+            # self.environment.set_occupied(tables, )
+            x1 = tables[0]
+            x2 = x1 + size_tuple[0]
+            y1 = tables[1]
+            y2 = y1 + size_tuple[1]
+            self.environment.env["occupied"][x1:x2, y1:y2] = table
+            self.environment.env["tables"][x1:x2, y1:y2] = table

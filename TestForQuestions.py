@@ -24,9 +24,24 @@ class TestForQuestions:
 
     # What is the best setup to optimize for profitability while still staying within time?
 
-    # '''This function'''
-    # def optimizeSetup(maxConsoles, maxStaff, ):
-
+    '''This function will only take in consideration for the effect of number of consoles, reporting booths, 
+    and hard time limit of 5 hours (aka 18000 secs). 
+    Assuming defaults we have:
+    - 1 booth volunteer
+    - timeLimit = 18000 seconds
+    - playerNum = 100 players
+    - entryFee = 3 dollars
+    - pricePerHour = 10 dollars
+    - maxConsoles is most number of consoles that players can realisticaly get to (+1 walking space)
+    In a 24 x 48 room, that would be 6 per row and 12 per column, or 72 consoles.
+    Profit is (player entry fee - number of consoles rented * price per hour)
+    Assuming entry fee and ppr stays the same, Max profit is only effected by shorter tournament
+    time or fewer rented consoles'''
+    # def optimizeSetup(maxConsoles = 72, booth = 1, playerNum = 100, timeLimit = 18000, entryFee = 3):
+    #     test = simulationDriver.SimulationDriver()
+    #     for rows in range():
+    #         test.__generate_console_configuration()
+        
     # How does whether we use a random walk or calculated distance actually impact runtime?
 
     # Do bathroom breaks greatly influence the amount of time it takes to run a tournament?
