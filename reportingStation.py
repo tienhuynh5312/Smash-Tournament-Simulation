@@ -53,8 +53,12 @@ class ReportingStation:
             console = openConsoles[0]
             self.consoles[console] = False
             self.currentConsole = console
-            print("Wow match can be played")
-            return(matchInfo, console)
+            if (matchInfo.p2id == -1) | (matchInfo.p2id == -1):
+                return(True, matchInfo, console)
+            else:
+                print("Wow match can be played")
+                return(False, matchInfo, console)
+
 
     # Accepts the result of a match and updates the
     # bracket and the console status

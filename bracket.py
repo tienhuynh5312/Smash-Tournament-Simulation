@@ -98,6 +98,9 @@ class Bracket(object):
     def isComplete(self):
         return self.numPlayers == 1
 
+    def percentCompletion(self):
+        return (self.numEliminated / (self.numPlayers - 1))
+
     # ------------------------ Private Methods -------------------
     def __generateWinnersBracket(self):
         WinnersRounds = []
@@ -106,8 +109,8 @@ class Bracket(object):
 
         # Create round 0 of matches
         for i in range(self.wExtra):
-            p1 = self.numPlayers - i
-            p2 = self.numPlayers - self.wExtra * 2 + i + 1
+            p1 = self.numPlayers - i - 1
+            p2 = self.numPlayers - self.wExtra * 2 + i
             wp = [0, 1, i // 2]
             lp = [1, 0, i // 2]
             match = Match(wp, lp, p1, p2)
@@ -115,7 +118,7 @@ class Bracket(object):
             self.nextMatches.put((0, [0, 0, i]))
 
         for i in range(1, self.numPlayers - self.wExtra * 2 + 1):
-            p1 = i
+            p1 = i - 1
             p2 = -1
             wp = [0, 1, (i + self.wExtra - 1) // 2]
             lp = [1, 0, (i + self.wExtra - 1) // 2]

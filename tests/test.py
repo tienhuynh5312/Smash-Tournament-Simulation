@@ -16,9 +16,10 @@ def test_1():
 
 
 def test_2():
-    SimulationDriver.TOTAL_PLAYERS = 100
-    SimulationDriver.SIM_DURATION = 100
+    SimulationDriver.TOTAL_PLAYERS = 50
+    SimulationDriver.SIM_DURATION = 1000
     x = SimulationDriver()
+    #time = x.begin(True)
     time = x.begin()
 
     print(time)
@@ -68,7 +69,11 @@ def test_6():
     testOrganizer = ReportingStation(testBracket, 1, [2, 2], 5)
     assert testBracket.isOver() is False, "Test Passed"
     while (not testBracket.nextMatches.empty()):
-        match = testOrganizer.callPlayers()
-        match[0].generateTime()
-        testOrganizer.updateBracket(match[0], match[1])
+        matchInfo = testOrganizer.callPlayers()
+        isBye = matchInfo[0]
+        match = matchInfo[1]
+        consoleId = matchInfo[2]
+        # Case where the match is a bye (no one should be called)
+        testOrganizer.updateBracket(match, consoleId)
+
     print(testBracket.numAlive)

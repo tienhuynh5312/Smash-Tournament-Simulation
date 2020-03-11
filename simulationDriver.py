@@ -44,7 +44,7 @@ class SimulationDriver:
     ALL_AREA_ROWS = WAITING_AREA_ROWS + CONSOLE_AREA_ROWS + WALL_ROWS
     ALL_AREA_COLS = 48
     NUMBER_OF_CONSOLES = 3
-    TOTAL_PLAYERS = 30
+    TOTAL_PLAYERS = 7
 
     # DOOR_LOCATIONS = [(WALL_ROW, 0), (WALL_ROW, 10), (WALL_ROW, 15)]
     DOOR_LOCATIONS = [(WALL_ROW, 20)]
@@ -122,10 +122,11 @@ class SimulationDriver:
                 player = self.players_list[pid]
                 if player.destination_location is None:
                     # player.set_destination(SimulationDriver.ORGANIZER_LOCATIONS[0])
-                    player.set_destination([10, 10])
+                    player.play_around()
+                else:
+                    self.environment.update()
+                    player.walk(self.environment)
 
-                self.environment.update()
-                player.walk(self.environment)
             # - Call a pair of player to the reporting station
             # - If they are here:
             # -     Assign player to the consoles by location
@@ -149,19 +150,31 @@ class SimulationDriver:
 
                 player.walk(self.environment)
 
-                # Run any available matches
-                if (not self.bracket.nextMatches.empty()) & (not self.Organizer.is_busy()):
-                    match = self.Organizer.callPlayers()
-                    player.set_destination(self.Organizer.current_location)
-                    match[0].generateTime()
-                    self.Organizer.updateBracket(match[0], match[1])
-                print(self.bracket.numAlive)
+            # Run any available matches
+            if (not self.bracket.nextMatches.empty()) & (not self.Organizer.is_busy()):
+                matchInfo = self.Organizer.callPlayers()
+                isBye = matchInfo[0]
+                match = matchInfo[1]
+                consoleId = matchInfo[2]
 
-                # Organizer will call matches
-                if self.Organizer.isWaiting:
-                    p1id = self.Organizer.currentP1
-                    p2id = self.Organizer.currentP2
-                    self.__TalkToPlayers(p1id, p2id)
+                # Case where the match is a bye (no one should be called)
+                if isBye == True:
+                    self.Organizer.updateBracket(match, consoleId)
+
+                # Case where the match is playable and involves two real people
+                else:
+                    player1 = self.players_list[match.p1id]
+                    player2 = self.players_list[match.p2id]
+                    player1.set_destination(self.Organizer.current_location)
+                    player2.set_destination(self.Organizer.current_location)
+                    self.Organizer.updateBracket(match, consoleId)
+            print(self.bracket.numAlive)
+
+            # Organizer will call matches
+            if self.Organizer.isWaiting:
+                p1id = self.Organizer.currentP1
+                p2id = self.Organizer.currentP2
+                self.__TalkToPlayers(p1id, p2id)
 
             # - Call a pair of player to the reporting station
             # - If they are here:
@@ -188,22 +201,23 @@ class SimulationDriver:
 
     def __TalkToPlayers(self, p1id, p2id):
         oLocation = np.array(self.Organizer.current_location)
-
         if p1id is not None:
-            p1 = self.players_list[p1id]
-            p1Location = np.array(p1.current_location)
-            if (oLocation - p1Location <= [1, 1]) | (oLocation - p1Location >= [1, 1]):
+            player1 = self.players_list[p1id]
+            if player1.is_here():
                 self.Organizer.receivePlayer(p1id)
                 # Move player to the console and have them play their match
-                p1.set_match(self.Organizer.currentMatch, self.CONSOLE_LOCATIONS[self.Organizer.currentConsole])
+                player1.set_destination(self.CONSOLE_LOCATIONS[self.Organizer.currentConsole])
+                # p1.set_match(self.Organizer.currentMatch, self.CONSOLE_LOCATIONS[self.Organizer.currentConsole])
+                print("wow!")
 
         if p2id is not None:
-            p2 = self.players_list[p2id]
-            p2Location = np.array(p2.current_location)
-            if (oLocation - p2Location <= [1, 1]) | (oLocation - p2Location >= [1, 1]):
+            player2 = self.players_list[p2id]
+            if player2.is_here():
                 self.Organizer.receivePlayer(p2id)
                 # Move player to the console and have them play their match
-                p2.set_destination(self.CONSOLE_LOCATIONS[self.Organizer.currentConsole])
+                player2.set_destination(self.CONSOLE_LOCATIONS[self.Organizer.currentConsole])
+                #p2.set_destination(self.CONSOLE_LOCATIONS[self.Organizer.currentConsole])
+                print("wow")
 
     def get_console_rental_fee(self):
         if self.time_stamp == 0:
