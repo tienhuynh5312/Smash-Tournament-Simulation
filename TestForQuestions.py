@@ -29,7 +29,7 @@ class TestForQuestions:
     Assuming defaults we have:
     - 1 booth volunteer
     - timeLimit = 18000 seconds
-    - playerNum = 100 players
+    - playerNum = 144 players
     - entryFee = 3 dollars
     - pricePerHour = 10 dollars
     - maxConsoles is most number of consoles that players can realisticaly get to (+1 walking space)
@@ -37,10 +37,11 @@ class TestForQuestions:
     Profit is (player entry fee - number of consoles rented * price per hour)
     Assuming entry fee and ppr stays the same, Max profit is only effected by shorter tournament
     time or fewer rented consoles'''
-    # def optimizeSetup(maxConsoles = 72, booth = 1, playerNum = 100, timeLimit = 18000, entryFee = 3):
-    #     test = simulationDriver.SimulationDriver()
-    #     for rows in range():
-    #         test.__generate_console_configuration()
+    def optimizeSetup(maxConsoles = 6, booth = 1, playerNum = 144, timeLimit = 18000, entryFee = 3):
+        test = simulationDriver.SimulationDriver()
+        test.TOTAL_PLAYERS = playerNum
+        for rows in range():
+            test.__generate_console_configuration()
         
     # How does whether we use a random walk or calculated distance actually impact runtime?
 
