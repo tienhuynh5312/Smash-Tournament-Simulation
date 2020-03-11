@@ -32,16 +32,47 @@ class TestForQuestions:
     - playerNum = 144 players
     - entryFee = 3 dollars
     - pricePerHour = 10 dollars
-    - maxConsoles is most number of consoles that players can realisticaly get to (+1 walking space)
-    In a 24 x 48 room, that would be 6 per row and 12 per column, or 72 consoles.
+    - maxConsoles is going to be 4 for this test.
     Profit is (player entry fee - number of consoles rented * price per hour)
-    Assuming entry fee and ppr stays the same, Max profit is only effected by shorter tournament
-    time or fewer rented consoles'''
-    def optimizeSetup(maxConsoles = 6, booth = 1, playerNum = 144, timeLimit = 18000, entryFee = 3):
+    *Assuming entry fee and ppr stays the same, Max profit is only effected by shorter tournament
+    time or fewer rented consoles
+    Tables added according to specs, test case:
+    - All 4 placed on every table (5)
+    - 1 console placed on each table'''
+    def optimizeSetup(maxConsoles = 4, booth = 1, playerNum = 144, timeLimit = 18000, entryFee = 3):
         test = simulationDriver.SimulationDriver()
+        test.player_admission_profit = entryFee
         test.TOTAL_PLAYERS = playerNum
-        for rows in range():
-            test.__generate_console_configuration()
+        test.SIM_DURATION = timeLimit
+        test.ORGANIZER_LOCATIONS = [(12, 48)]
+        test.__generate_players()
+        test.__generate_report_stations()
+
+        #Changing Table Locations and recall again for orientation, could be improved?
+        test.TABLE_LOCATIONS = [(18, 0)]
+        #Vertical Table size
+        size_tuple = (3, 12)
+        test.__generate_table(size_tuple)
+
+        #For Horizontal tables
+        test.TABLE_LOCATIONS = [(3, 12), (12, 12), (15, 12), (24, 12)]
+        size_tuple2 = (24, 3)
+        test.__generate_table(size_tuple2)
+
+        test.TABLE_LOCATIONS.insert(0,(18, 0))
+
+        profits_list = []
+
+        for table in test.TABLE_LOCATIONS:
+            for console in range(1, maxConsoles):
+                profit = 0
+                
+                # table
+                
+
+                if (timeLimit <= 0):
+                    profits_list.append
+                test.__generate_console_configuration()
         
     # How does whether we use a random walk or calculated distance actually impact runtime?
 
