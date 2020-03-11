@@ -4,6 +4,7 @@ from simulationDriver import SimulationDriver
 from environment import Environment
 from Player import Player
 from bracket import Bracket
+from reportingStation import ReportingStation
 import numpy as np
 import sys
 np.set_printoptions(threshold=sys.maxsize)
@@ -36,10 +37,12 @@ def test_4():
     # # x.walk(sim.environment)
     y = Player(1)
 
+# Test cases for the bracket Class
 def test_5():
     test = Bracket(7, 2)
     sum = 0
     print(str(test))
+    assert test.isOver() is False, "Test Passed"
     while (not test.nextMatches.empty()):
         matchId = test.nextMatches.get()[1]
         test.nextMatches
@@ -52,5 +55,14 @@ def test_5():
         lp = match.getlpath()
         test.updatePlayer(wp, winner)
         test.updatePlayer(lp, loser)
+    print(test.numAlive)
+    assert test.isOver() is True, "Test Passed"
 
-    print(str(sum))
+# Test cases for the Reporting Station Class
+def test_6():
+    testBracket = Bracket(7, 2)
+    testOrganizer = ReportingStation(testBracket, 1, [2, 2], 5)
+    match = testOrganizer.callPlayers()
+    time = match[0].generateTime()
+    print(time)
+    testOrganizer.updateBracket(match[0], match[1])
