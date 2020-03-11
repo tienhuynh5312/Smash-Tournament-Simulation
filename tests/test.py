@@ -7,18 +7,20 @@ from bracket import Bracket
 from reportingStation import ReportingStation
 import numpy as np
 import sys
+
 np.set_printoptions(threshold=sys.maxsize)
+
 
 def test_1():
     assert 1 + 1 == 2, "Test Passed"
+
 
 def test_2():
     SimulationDriver.TOTAL_PLAYERS = 100
     SimulationDriver.SIM_DURATION = 1000
     x = SimulationDriver()
     x.begin()
-    print(x.environment.env["players"])
-    print(x.environment.env["occupied"])
+
 
 def test_3():
     x = Environment(30, 30)

@@ -42,7 +42,7 @@ class Player:
         else:
             return 0
 
-    def set_busy_time(self, busy_time=0):
+    def set_busy_time(self, busy_time):
         self.busy_time = busy_time
         print_debug(f"set player {self.player_id} busy for {self.busy_time}")
 
@@ -69,7 +69,7 @@ class Player:
             if env is not None:
                 env.remove_occupied(self.current_location, "players")
 
-    def is_here(self, radius=1):
+    def is_here(self, radius=1, to_door=False):
         from simulationDriver import SimulationDriver
 
         if self.destination_location is None:
@@ -86,10 +86,12 @@ class Player:
         #         if len(self.destination_locations) - 1 > self.destination_index:
         #             self.destination_index = self.destination_index + 1
         #         return True
-
-        if abs(distance_row) <= radius and abs(distance_col) <= radius:
-            self.destination_location = None
-            return True
+        if to_door:
+            if abs(distance_row) <= 0 and abs(distance_col+2) <= 0:
+                return True
+        else:
+            if abs(distance_row) <= radius and abs(distance_col) <= radius:
+                return True
 
         return False
 
@@ -98,8 +100,9 @@ class Player:
         import numpy as np
 
         def walk2door():
-            if SimulationDriver.WALL_ROW in range(self.current_location[0], self.destination_location[0]) or \
-                    SimulationDriver.WALL_ROW in range(self.destination_location[0], self.current_location[0]):
+            a = self.current_location[0] - SimulationDriver.WALL_ROW
+            b = self.destination_location[0] - SimulationDriver.WALL_ROW
+            if a*b <= 0:
                 print_debug("Switching area. Need to go to door")
                 return True
             else:
@@ -129,6 +132,7 @@ class Player:
             direction_choice = np.random.random()
             row_location = self.current_location[0] + bias[0]
             col_location = self.current_location[1] + bias[1]
+
             if direction_choice < 0.5:
                 # go vertical
                 if go_south:
@@ -142,6 +146,16 @@ class Player:
                 else:
                     col_location = col_location - 1
 
+            if row_location < 0:
+                row_location = 0
+            elif row_location > SimulationDriver.ALL_AREA_ROWS - 1:
+                row_location = SimulationDriver.ALL_AREA_ROWS - 1
+
+            if col_location < 0:
+                col_location = 0
+            elif col_location > SimulationDriver.ALL_AREA_COLS - 1:
+                col_location = SimulationDriver.ALL_AREA_COLS - 1
+
             return row_location, col_location
 
         def is_out_of_bound(row, col):
@@ -154,43 +168,35 @@ class Player:
             return False
 
         if random() < SimulationDriver.PLAYER_BATHROOM_PERCENT:
-            self.take_break(env)
+            self.take_break()
 
         # - make the player walk toward the destination location
         for i in range(SimulationDriver.TIME_STEP):
-            if self.is_busy():
+            if self.is_busy(env=env):
                 print_debug(f"Can't walk.")
                 continue
 
-            if self.is_here():
+            if self.is_here(to_door=walk2door()):
                 print_debug(f"player id {self.player_id} is here at {self.destination_location}")
-                if not self.is_waiting:
-                    # play now. set it busy
-                    self.set_busy_time(busy_time=10000)
                 break
 
-            try_timeout = 4
+            try_timeout = 1
             new_row_location, new_col_location = get_new_location(to_door=walk2door())
-            while is_out_of_bound(new_row_location, new_col_location):
+            while env.env["occupied"][(new_row_location, new_col_location)] > 0:
                 try_timeout = try_timeout - 1
-                if try_timeout == -1:
+                if try_timeout < 0:
                     print_debug(
                         f"Cannot find a way {new_row_location, new_col_location}. Wait here {self.current_location}")
-                    print_debug(f"{env.env['occupied'][(new_row_location, new_col_location)]}")
                     break
+
                 new_row_location, new_col_location = get_new_location(to_door=walk2door())
-                if new_row_location + 1 == SimulationDriver.WALL_ROW or new_row_location - 1 == SimulationDriver:
-                    pass
-                if env.env["occupied"][(new_row_location, new_col_location)] == 1 or\
-                        env.env["consoles"][(new_row_location, new_col_location)] == 1:
-                    print_debug("New location is occupied. Try a different one")
-                    continue
 
             if try_timeout > -1:
                 env.move_occupied(self.current_location, (new_row_location, new_col_location), "players")
                 self.current_location = (new_row_location, new_col_location)
                 print_debug(self.current_location)
                 self.walking_distance = self.walking_distance + 1
+                env.update()
 
     def set_destination(self, location_tuple=(0, 0)):
         from simulationDriver import SimulationDriver
