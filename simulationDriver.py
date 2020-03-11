@@ -127,7 +127,7 @@ class SimulationDriver:
 
             self.data[index_plot] = self.environment.env["occupied"]
             index_plot = index_plot + 1
-            # - TODO: condition to end the outermost while loop
+            # - TODO: condition to end the outermost while loop -> add bracket termination
             if self.time_stamp == SimulationDriver.SIM_DURATION:
                 break
 
