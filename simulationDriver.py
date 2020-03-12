@@ -8,6 +8,7 @@ from Utility import print_debug
 
 import numpy as np
 
+
 class SimulationDriver:
     """
     Class which drives the simulation of the smash tournament
@@ -51,22 +52,22 @@ class SimulationDriver:
     DOOR_LOCATIONS = [(WALL_ROW, 20)]
     ORGANIZER_LOCATIONS = [(45, 45)]
 
-    CONSOLE_LOCATIONS = {"horizontal": [(2, 5), (0, 23), (3,25)],
-                         "vertical": [(0, 0), (5, 5), (5,40), (0,40), (10, 40), (17, 40)]}
+    CONSOLE_LOCATIONS = {"horizontal": [(2, 5), (0, 23), (3, 25)],
+                         "vertical": [(0, 0), (5, 5), (5, 40), (0, 40), (10, 40), (17, 40)]}
     CONSOLE_BY_ID = np.concatenate((np.array(CONSOLE_LOCATIONS["horizontal"]),
-                                   np.array(CONSOLE_LOCATIONS["vertical"])),
-                                   axis = 0)
-    CONSOLE_AVAILABILITY = np.ones(len(CONSOLE_BY_ID), dtype = bool)
+                                    np.array(CONSOLE_LOCATIONS["vertical"])),
+                                   axis=0)
+    CONSOLE_AVAILABILITY = np.ones(len(CONSOLE_BY_ID), dtype=bool)
 
-    CONSOLE_HORIZONTAL_SIZE = (1, 3)  # console size when in horizontal size.
+    CONSOLE_HORIZONTAL_SIZE = (1, 2)  # console size when in horizontal size.
 
     PLAYER_SHOW_UP_LATE_PERCENT = 0.05
     PLAYER_BATHROOM_PERCENT = 0.01
     BATHROOM_DISTANCE = 101
     SIM_DURATION = 100  # seconds
 
-    #Table params: Table_x, Table_y. (x, y) is lower left corner
-    TABLE_LOCATIONS = [(10,12)]
+    # Table params: Table_x, Table_y. (x, y) is lower left corner
+    TABLE_LOCATIONS = [(10, 12)]
 
     def __init__(self):
         """
@@ -104,23 +105,22 @@ class SimulationDriver:
         self.environment.update
         self.data = []
 
-        # TODO: Temporry single organizer
+        # TODO: Temporary single organizer
         self.Organizer = ReportingStation(self.bracket, 1, SimulationDriver.ORGANIZER_LOCATIONS[0], 9)
         print(self.environment.env["occupied"])
-
 
     def begin(self, visual=False):
         """Begin the simulation"""
         self.__start_tournament()
         if visual:
             Visualize.plot_3d(self.data, self.environment.env)
-        return(self.__report_tournament())
-
+        return (self.__report_tournament())
 
     def __start_tournament(self):
         import numpy as np
         # - TODO: Run the tournament
         index_plot = 0
+
         while True:
             # - Call a pair of player to the reporting station
             # - If they are here:
@@ -133,11 +133,10 @@ class SimulationDriver:
             # if player just get eliminated, give them a staying time:
             # - if player.isRecentlyEliminated():
             #       player.playAround()
-
             for pid in self.players_list.keys():
                 player = self.players_list[pid]
-                player.walk(self.environment)
-
+                if player.destination_location is not None:
+                    player.walk(self.environment)
             # Organizer will call matches
             if self.Organizer.isWaiting:
                 p1id = self.Organizer.currentP1
@@ -165,14 +164,8 @@ class SimulationDriver:
                         player2 = self.players_list[match.p2id]
                         player1.set_destination(self.Organizer.current_location)
                         player2.set_destination(self.Organizer.current_location)
-                        #self.Organizer.updateBracket(match, consoleId)
+                        # self.Organizer.updateBracket(match, consoleId)
                 print(self.bracket.numAlive)
-
-            # Organizer will call matches
-            if self.Organizer.is_waiting():
-                p1id = self.Organizer.currentP1
-                p2id = self.Organizer.currentP2
-                self.__TalkToPlayers(p1id, p2id)
 
             # - Call a pair of player to the reporting station
             # - If they are here:
@@ -219,7 +212,7 @@ class SimulationDriver:
                 # Move player to the console and have them play their match
                 player2.set_match(match, self.CONSOLE_BY_ID[self.Organizer.currentConsole])
                 player2.to_organizer = -1
-                #p2.set_destination(self.CONSOLE_LOCATIONS[self.Organizer.currentConsole])
+                # p2.set_destination(self.CONSOLE_LOCATIONS[self.Organizer.currentConsole])
                 print_debug(f"Player {p2id} to console {self.Organizer.currentConsole}")
 
         if p1id is not None and p2id is not None:
@@ -236,7 +229,7 @@ class SimulationDriver:
         total_profit = SimulationDriver.TOTAL_PLAYERS * self.player_admission_profit - self.get_console_rental_fee()
         return total_profit
 
-    #Cannot place console unless it is on a table
+    # Cannot place console unless it is on a table
     def __generate_console_configuration(self):
         import numpy as np
         def draw_console(size_tuple, horizontal=True):
@@ -305,7 +298,7 @@ class SimulationDriver:
     # size_tuple = (width, height)
     def __generate_table(self, size_tuple):
         import numpy as np
-        
+
         table = np.ones(size_tuple)
 
         for tables in SimulationDriver.TABLE_LOCATIONS:
