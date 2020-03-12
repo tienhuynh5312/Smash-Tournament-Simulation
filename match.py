@@ -90,7 +90,8 @@ class Match(object):
         controllerTime = np.random.binomial(4, .5)
         sum = sum + controllerTime
         self.matchTime = sum
-        return sum
+        #return sum
+        return 2
 
     def playerArrived(self):
         self.playersNeeded = self.playersNeeded - 1
