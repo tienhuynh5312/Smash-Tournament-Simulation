@@ -31,6 +31,7 @@ class Player:
         self.match = None
         self.to_organizer = None
         self.after_match = False
+        self.bias = 0
 
     def __del__(self):
         Player.total_players = Player.total_players - 1
@@ -153,7 +154,7 @@ class Player:
             row_location = self.current_location[0] + bias[0]
             col_location = self.current_location[1] + bias[1]
 
-            if direction_choice < 0.5:
+            if direction_choice < 0.5+self.bias:
                 # go vertical
                 if go_south:
                     row_location = row_location + 1
@@ -187,6 +188,14 @@ class Player:
 
             return False
 
+        def get_bias(location):
+            row_bias = location[0]-self.current_location[0]
+            col_bias = location[1]-self.current_location[1]
+            if row_bias != 0:
+                return -0.25
+            elif col_bias != 0:
+                return 0.25
+            
         if random() < SimulationDriver.PLAYER_BATHROOM_PERCENT:
             self.take_break()
 
@@ -216,6 +225,7 @@ class Player:
             new_row_location, new_col_location = get_new_location(to_door=walk2door())
             while env.env["occupied"][(new_row_location, new_col_location)] > 0:
                 try_timeout = try_timeout - 1
+                self.bias = get_bias((new_row_location, new_col_location))
                 if try_timeout < 0:
                     print_debug(
                         f"Cannot find a way {new_row_location, new_col_location}. Wait here {self.current_location}->{self.destination_location}")
@@ -234,7 +244,7 @@ class Player:
         self.destination_location = location_tuple
 
     def is_eliminated(self):
-        if not self.is_playing:
+        if self.is_recently_eliminated:
             return True
         else:
             return False
