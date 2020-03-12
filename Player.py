@@ -29,9 +29,11 @@ class Player:
         self.destination_location = None
         self.playTime = 0
         self.match = None
-        self.to_organizer = 1
+        self.to_organizer = -1
         self.after_match = False
-        self.is_in_a_match = False
+        self.second_player = None
+        self.after_report = False
+        self.take_off_after_report = False
         self.bias = 0
 
     def __del__(self):
@@ -88,23 +90,29 @@ class Player:
         distance_row = self.destination_location[0] - self.current_location[0]
         distance_col = self.destination_location[1] - self.current_location[1]
 
-        # if self.destination_locations[self.destination_index][0] < SimulationDriver.WALL_ROW <= \
-        #         self.current_location[0]:
-        #     print_debug(f"Switching area. Need to go through door.")
-        #     if abs(distance_row) == 0 and abs(distance_col) == 0:
-        #         if len(self.destination_locations) - 1 > self.destination_index:
-        #             self.destination_index = self.destination_index + 1
-        #         return True
         if to_door:
             if abs(distance_row) <= 0 and abs(distance_col) <= 2:
-                self.destination_location = None
                 return True
         else:
             if abs(distance_row) <= radius and abs(distance_col) <= radius:
-                self.destination_location = None
                 return True
 
         return False
+
+    def is_busy(self, duration=1, env=None):
+        self.busy_time = self.busy_time - duration
+        if self.busy_time > 0:
+            print_debug(f"Player {self.player_id} is busy/bathroom/late")
+        else:
+            if env is not None:
+                env.set_occupied(self.current_location, "players")
+
+            if self.playTime < 0:
+                self.after_match = True
+                self.is_playing = False
+                self.second_player = None
+            print_debug(f"Player {self.player_id} is free")
+        return self.busy_time > 0
 
     def walk(self, env):
         from simulationDriver import SimulationDriver
@@ -150,6 +158,7 @@ class Player:
                 go_east = True
             else:
                 go_east = False
+
 
             # bias walk
             direction_choice = np.random.random()
@@ -201,52 +210,57 @@ class Player:
             else:
                 return 0
 
-        if self.destination_location is None:
-            self.move_random()
-
         if random() < SimulationDriver.PLAYER_BATHROOM_PERCENT:
             self.take_break()
-
         if self.after_match:
             # walking method after a match
             if self.to_organizer < 0:  # to waiting area
                 location = get_random_location_waiting_area(env)
                 self.set_destination(location)
             elif self.to_organizer >= 0:  # to organizer
+                self.take_off_after_report = True
                 self.set_destination(SimulationDriver.ORGANIZER_LOCATIONS[self.to_organizer])
             self.after_match = False
+        if self.is_recently_eliminated:
+            location = get_random_location_waiting_area(env)
+            self.set_destination(location)
 
         # - make the player walk toward the destination location
         for i in range(SimulationDriver.TIME_STEP):
             if self.is_busy(env=env):
                 print_debug(f"Can't walk.")
                 continue
+            else:
+                if self.is_here():
+                    print_debug(f"player id {self.player_id} is here at {self.destination_location}")
+                    if self.playTime > 0 and self.second_player is not None:
+                        if self.second_player.is_here():
+                            self.set_busy_time(self.playTime)  # assign play time
+                            self.playTime = -1  # reset after assignment.
+                    if self.take_off_after_report:
+                        location = get_random_location_waiting_area(env)
+                        self.set_destination(location)
+                        self.take_off_after_report = False
+                    continue
 
-            if self.is_here():
-                print_debug(f"player id {self.player_id} is here at {self.destination_location}")
-                if self.playTime > 0:
-                    self.set_busy_time(self.playTime)  # assign play time
-                    self.playTime = -1  # reset after assignment.
-                break
-
-            try_timeout = 1
-            new_row_location, new_col_location = get_new_location(to_door=walk2door())
-            while env.env["occupied"][(new_row_location, new_col_location)] > 0:
-                try_timeout = try_timeout - 1
-                self.bias = get_bias((new_row_location, new_col_location))
-                if try_timeout < 0:
-                    print_debug(
-                        f"Cannot find a way {new_row_location, new_col_location}. Wait here {self.current_location}->{self.destination_location}")
-                    break
-
+                try_timeout = 1
                 new_row_location, new_col_location = get_new_location(to_door=walk2door())
+                while env.env["occupied"][(new_row_location, new_col_location)] > 0:
+                    try_timeout = try_timeout - 1
+                    self.bias = get_bias((new_row_location, new_col_location))
+                    if try_timeout < 0:
+                        print_debug(
+                            f"Cannot find a way {new_row_location, new_col_location}. Wait here {self.current_location}->{self.destination_location}")
+                        break
 
-            if try_timeout > -1:
-                env.move_occupied(self.current_location, (new_row_location, new_col_location), "players")
-                self.current_location = (new_row_location, new_col_location)
-                print_debug(self.current_location)
-                self.walking_distance = self.walking_distance + 1
-                env.update()
+                    new_row_location, new_col_location = get_new_location(to_door=walk2door())
+
+                if try_timeout > -1:
+                    env.move_occupied(self.current_location, (new_row_location, new_col_location), "players")
+                    self.current_location = (new_row_location, new_col_location)
+                    print_debug(self.current_location)
+                    self.walking_distance = self.walking_distance + 1
+                    env.update()
 
     def set_destination(self, location_tuple):
         self.destination_location = location_tuple
@@ -288,7 +302,6 @@ class Player:
         self.match = match
         self.playTime = match.matchTime
         self.is_playing = True
-        self.is_in_a_match = True
 
     def report_match(self, OrganizerLocation):
         # Walk to the organizer
