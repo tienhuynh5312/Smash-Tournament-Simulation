@@ -4,6 +4,7 @@ from Player import Player
 from visualize import Visualize
 from reportingStation import ReportingStation
 from bracket import Bracket
+from Utility import print_debug
 
 import numpy as np
 
@@ -48,11 +49,15 @@ class SimulationDriver:
 
     # DOOR_LOCATIONS = [(WALL_ROW, 0), (WALL_ROW, 10), (WALL_ROW, 15)]
     DOOR_LOCATIONS = [(WALL_ROW, 20)]
-    ORGANIZER_LOCATIONS = [(10, 45)]
+    ORGANIZER_LOCATIONS = [(45, 45)]
 
-    CONSOLE_LOCATIONS = [(0, 1), (0, 5), (0, 23)]
     CONSOLE_LOCATIONS = {"horizontal": [(2, 5), (0, 23), (3,25)],
                          "vertical": [(0, 0), (5, 5), (5,40), (0,40), (10, 40), (17, 40)]}
+    CONSOLE_BY_ID = np.concatenate((np.array(CONSOLE_LOCATIONS["horizontal"]),
+                                   np.array(CONSOLE_LOCATIONS["vertical"])),
+                                   axis = 0)
+    CONSOLE_AVAILABILITY = np.ones(len(CONSOLE_BY_ID), dtype = bool)
+
     CONSOLE_HORIZONTAL_SIZE = (1, 3)  # console size when in horizontal size.
 
     PLAYER_SHOW_UP_LATE_PERCENT = 0.05
@@ -100,7 +105,7 @@ class SimulationDriver:
         self.data = []
 
         # TODO: Temporry single organizer
-        self.Organizer = ReportingStation(self.bracket, 1, SimulationDriver.ORGANIZER_LOCATIONS[0], 5)
+        self.Organizer = ReportingStation(self.bracket, 1, SimulationDriver.ORGANIZER_LOCATIONS[0], 9)
         print(self.environment.env["occupied"])
 
 
@@ -150,12 +155,22 @@ class SimulationDriver:
 
                 player.walk(self.environment)
 
+            # Organizer will call matches
+            if self.Organizer.isWaiting:
+                p1id = self.Organizer.currentP1
+                p2id = self.Organizer.currentP2
+                self.__TalkToPlayers(p1id, p2id)
+
             # Run any available matches
-            if (not self.bracket.nextMatches.empty()) & (not self.Organizer.is_busy()):
+            openConsoles = np.where(self.CONSOLE_AVAILABILITY == True)[0]
+            if ((not self.bracket.nextMatches.empty()) &
+                    (not self.Organizer.is_busy()) &
+                    (len(openConsoles) > 0)):
                 matchInfo = self.Organizer.callPlayers()
                 isBye = matchInfo[0]
                 match = matchInfo[1]
                 consoleId = matchInfo[2]
+                self.CONSOLE_AVAILABILITY[consoleId] = False
 
                 # Case where the match is a bye (no one should be called)
                 if isBye == True:
@@ -167,14 +182,8 @@ class SimulationDriver:
                     player2 = self.players_list[match.p2id]
                     player1.set_destination(self.Organizer.current_location)
                     player2.set_destination(self.Organizer.current_location)
-                    self.Organizer.updateBracket(match, consoleId)
+                    #self.Organizer.updateBracket(match, consoleId)
             print(self.bracket.numAlive)
-
-            # Organizer will call matches
-            if self.Organizer.isWaiting:
-                p1id = self.Organizer.currentP1
-                p2id = self.Organizer.currentP2
-                self.__TalkToPlayers(p1id, p2id)
 
             # - Call a pair of player to the reporting station
             # - If they are here:
@@ -200,24 +209,25 @@ class SimulationDriver:
         return self.time_stamp
 
     def __TalkToPlayers(self, p1id, p2id):
+        print_debug(f"Tried Talking With {p1id} and  {p2id}")
         oLocation = np.array(self.Organizer.current_location)
         if p1id is not None:
             player1 = self.players_list[p1id]
             if player1.is_here():
                 self.Organizer.receivePlayer(p1id)
                 # Move player to the console and have them play their match
-                player1.set_destination(self.CONSOLE_LOCATIONS[self.Organizer.currentConsole])
+                player1.set_destination(self.CONSOLE_BY_ID[self.Organizer.currentConsole])
                 # p1.set_match(self.Organizer.currentMatch, self.CONSOLE_LOCATIONS[self.Organizer.currentConsole])
-                print("wow!")
+                print_debug(f"Players {p1id} to console {self.Organizer.currentConsole}")
 
         if p2id is not None:
             player2 = self.players_list[p2id]
             if player2.is_here():
                 self.Organizer.receivePlayer(p2id)
                 # Move player to the console and have them play their match
-                player2.set_destination(self.CONSOLE_LOCATIONS[self.Organizer.currentConsole])
+                player2.set_destination(self.CONSOLE_BY_ID[self.Organizer.currentConsole])
                 #p2.set_destination(self.CONSOLE_LOCATIONS[self.Organizer.currentConsole])
-                print("wow")
+                print_debug(f"Player {p2id} to console {self.Organizer.currentConsole}")
 
     def get_console_rental_fee(self):
         if self.time_stamp == 0:

@@ -53,6 +53,8 @@ class ReportingStation:
             console = openConsoles[0]
             self.consoles[console] = False
             self.currentConsole = console
+            self.currentP1 = matchInfo.p1id
+            self.currentP2 = matchInfo.p2id
             if (matchInfo.p2id == -1) | (matchInfo.p2id == -1):
                 return(True, matchInfo, console)
             else:
