@@ -31,6 +31,7 @@ class Player:
         self.match = None
         self.to_organizer = -1
         self.after_match = False
+        self.is_in_a_match = False
         self.bias = 0
 
     def __del__(self):
@@ -58,9 +59,9 @@ class Player:
         else:
             if env is not None:
                 env.set_occupied(self.current_location, "players")
-            # if self.is_playing:
-            #     self.after_match = True
-            #     self.is_playing = False
+            if self.playTime < 0:
+                self.after_match = True
+                self.is_playing = False
             print_debug(f"Player {self.player_id} is free")
         return self.busy_time > 0
 
@@ -225,7 +226,7 @@ class Player:
                 print_debug(f"player id {self.player_id} is here at {self.destination_location}")
                 if self.playTime > 0:
                     self.set_busy_time(self.playTime)  # assign play time
-                    self.playTime = 0  # reset after assignment.
+                    self.playTime = -1  # reset after assignment.
                 break
 
             try_timeout = 1
@@ -287,6 +288,7 @@ class Player:
         self.match = match
         self.playTime = match.matchTime
         self.is_playing = True
+        self.is_in_a_match = True
 
     def report_match(self, OrganizerLocation):
         # Walk to the organizer
