@@ -163,8 +163,8 @@ class SimulationDriver:
 
             # Run any available matches
             openConsoles = np.where(self.CONSOLE_AVAILABILITY == True)[0]
-            if ((not self.bracket.nextMatches.empty()) &
-                    (not self.Organizer.is_busy()) &
+            if ((not self.bracket.nextMatches.empty()) and
+                    (not self.Organizer.is_busy()) and
                     (len(openConsoles) > 0)):
                 matchInfo = self.Organizer.callPlayers()
                 isBye = matchInfo[0]

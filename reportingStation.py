@@ -46,7 +46,7 @@ class ReportingStation:
     def callPlayers(self):
         # Checks to see if console + match is available
         openConsoles = np.where(self.consoles == True)[0]
-        if (not self.bracket.nextMatches.empty()) & (len(openConsoles) > 0):
+        if (not self.bracket.nextMatches.empty()) and (len(openConsoles) > 0):
             self.isWaiting = True
             matchIndex = self.bracket.nextMatches.get()[1]
             matchInfo = self.bracket.getMatch(matchIndex)
@@ -55,7 +55,7 @@ class ReportingStation:
             self.currentConsole = console
             self.currentP1 = matchInfo.p1id
             self.currentP2 = matchInfo.p2id
-            if (matchInfo.p2id == -1) | (matchInfo.p2id == -1):
+            if (matchInfo.p2id == -1) or (matchInfo.p2id == -1):
                 return(True, matchInfo, console)
             else:
                 print("Wow match can be played")
@@ -83,7 +83,7 @@ class ReportingStation:
             self.currentP1 = None
         if self.currentP2 == playerID:
             self.currentP2 = None
-        if (self.currentP1 is None) & (self.currentP2 is None):
+        if (self.currentP1 is None) and (self.currentP2 is None):
             self.isWaiting = False
         return [self.currentMatch, self.currentConsole]
 
