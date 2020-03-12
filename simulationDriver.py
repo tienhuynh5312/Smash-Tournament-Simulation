@@ -67,7 +67,7 @@ class SimulationDriver:
     SIM_DURATION = 100  # seconds
 
     #Table params: Table_x, Table_y. (x, y) is lower left corner
-    TABLE_LOCATIONS = [(10,12)]
+    TABLE_LOCATIONS = [(2,5)]
 
     def __init__(self):
         """
