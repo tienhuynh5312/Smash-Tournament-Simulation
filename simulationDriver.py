@@ -49,7 +49,7 @@ class SimulationDriver:
 
     # DOOR_LOCATIONS = [(WALL_ROW, 0), (WALL_ROW, 10), (WALL_ROW, 15)]
     DOOR_LOCATIONS = [(WALL_ROW, 20)]
-    ORGANIZER_LOCATIONS = [(45, 45)]
+    ORGANIZER_LOCATIONS = [(10, 45)]
 
     CONSOLE_LOCATIONS = {"horizontal": [(2, 5), (0, 23), (3,25)],
                          "vertical": [(0, 0), (5, 5), (5,40), (0,40), (10, 40), (17, 40)]}

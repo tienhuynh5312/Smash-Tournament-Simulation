@@ -29,7 +29,7 @@ class Player:
         self.destination_location = None
         self.playTime = 0
         self.match = None
-        self.to_organizer = -1
+        self.to_organizer = 1
         self.after_match = False
         self.bias = 0
 
@@ -59,8 +59,8 @@ class Player:
             if env is not None:
                 env.set_occupied(self.current_location, "players")
             if self.is_playing:
-                self.after_match = True
-                self.is_playing = False
+                # self.after_match = True
+                self.is_playing = True
             print_debug(f"Player {self.player_id} is free")
         return self.busy_time > 0
 
