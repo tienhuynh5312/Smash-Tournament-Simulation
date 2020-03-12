@@ -96,9 +96,11 @@ class Player:
         #         return True
         if to_door:
             if abs(distance_row) <= 0 and abs(distance_col+2) <= 0:
+                self.destination_location = None
                 return True
         else:
             if abs(distance_row) <= radius and abs(distance_col) <= radius:
+                self.destination_location = None
                 return True
 
         return False
@@ -195,7 +197,10 @@ class Player:
                 return -0.25
             elif col_bias != 0:
                 return 0.25
-            
+
+        if self.destination_location is None:
+            self.move_random()
+
         if random() < SimulationDriver.PLAYER_BATHROOM_PERCENT:
             self.take_break()
 
