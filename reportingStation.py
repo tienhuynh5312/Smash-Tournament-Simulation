@@ -32,7 +32,7 @@ class ReportingStation:
     def is_busy(self, duration=1, env=None):
         self.busy_time = self.busy_time - duration
         if self.isWaiting:
-            print_debug(f"Reporting Station{self.Stationid} is waiting for players still")
+            print_debug(f"Still Waiting")
         elif self.busy_time > 0:
             print_debug(f"Reporting Station{self.Stationid} is talking to someone right now")
         else:
@@ -40,6 +40,12 @@ class ReportingStation:
                 env.set_occupied(self.current_location, "organizers")
             print_debug(f"Player {self.Stationid} is free")
         return self.busy_time > 0
+
+    def is_waiting(self):
+        if (self.isWaiting):
+            print_debug(f"Reporting Station{self.Stationid} is waiting for players {self.currentP1} and {self.currentP2} still")
+        return self.isWaiting
+
 
     # Returns the player ids of the match that needs to be played and the console
     # that the match should be played at

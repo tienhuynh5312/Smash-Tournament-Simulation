@@ -151,12 +151,6 @@ class SimulationDriver:
 
                 player.walk(self.environment)
 
-            # Organizer will call matches
-            if self.Organizer.isWaiting:
-                p1id = self.Organizer.currentP1
-                p2id = self.Organizer.currentP2
-                self.__TalkToPlayers(p1id, p2id)
-
             # Run any available matches
             openConsoles = np.where(self.CONSOLE_AVAILABILITY == True)[0]
             if ((not self.bracket.nextMatches.empty()) and
@@ -178,8 +172,14 @@ class SimulationDriver:
                     player2 = self.players_list[match.p2id]
                     player1.set_destination(self.Organizer.current_location)
                     player2.set_destination(self.Organizer.current_location)
-                    #self.Organizer.updateBracket(match, consoleId)
             print(self.bracket.numAlive)
+
+
+            # Organizer will call matches
+            if self.Organizer.is_waiting():
+                p1id = self.Organizer.currentP1
+                p2id = self.Organizer.currentP2
+                self.__TalkToPlayers(p1id, p2id)
 
             # - Call a pair of player to the reporting station
             # - If they are here:
