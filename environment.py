@@ -18,8 +18,6 @@ class Environment:
 
         self.__players_array = np.zeros((m, n))
 
-        self.__tables_array = np.zeros((m, n))
-
         self.__wall_array = np.ones((m, n))
 
 
@@ -28,13 +26,9 @@ class Environment:
                     "organizers": self.__organizers_array,
                     "consoles": self.__consoles_array,
                     "players": self.__players_array,
-                    "tables": self.__tables_array,
                     "wall": self.__wall_array}
 
         self.__generate_wall()
-
-        #Must do generate table before generate console
-        self.__generate_table((4, 5))
 
         self.__generate_consoles()
 
@@ -69,8 +63,7 @@ class Environment:
             x2 = x1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[0]
             y1 = console[1]
             y2 = y1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[1]
-            if np.all(self.env["tables"][x1:x2, y1:y2]):
-                self.env["consoles"][x1:x2, y1:y2] = 1
+            self.env["consoles"][x1:x2, y1:y2] = 1
 
         data = draw_console(SimulationDriver.CONSOLE_HORIZONTAL_SIZE, False)
         for console in SimulationDriver.CONSOLE_LOCATIONS["vertical"]:
@@ -78,24 +71,7 @@ class Environment:
             x2 = x1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[1]
             y1 = console[1]
             y2 = y1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[0]
-            if np.all(self.env["tables"][x1:x2, y1:y2]):
-                self.env["consoles"][x1:x2, y1:y2] = 1
-
-    # size_tuple = (width, height)
-    def __generate_table(self, size_tuple):
-        from simulationDriver import SimulationDriver
-        import numpy as np
-
-        table = np.ones(size_tuple)
-
-        for tables in SimulationDriver.TABLE_LOCATIONS:
-            # self.environment.set_occupied(tables, )
-            x1 = tables[0]
-            x2 = x1 + size_tuple[0]
-            y1 = tables[1]
-            y2 = y1 + size_tuple[1]
-            self.env["occupied"][x1:x2, y1:y2] = table
-            self.env["tables"][x1:x2, y1:y2] = table
+            self.env["consoles"][x1:x2, y1:y2] = 1
 
 
     def update(self):
@@ -104,8 +80,7 @@ class Environment:
         self.env['occupied'] = self.__consoles_array + \
                                self.__players_array + \
                                self.__organizers_array + \
-                               self.__wall_array + \
-                               self.__tables_array
+                               self.__wall_array
 
     def set_occupied(self, location_tuple, env_string):
         self.env.get(env_string)[location_tuple] = 1
