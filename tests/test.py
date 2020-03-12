@@ -2,7 +2,7 @@ import pytest
 
 from simulationDriver import SimulationDriver
 from environment import Environment
-from Player import Player
+from player import Player
 from bracket import Bracket
 from reportingStation import ReportingStation
 import numpy as np
