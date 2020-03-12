@@ -225,6 +225,7 @@ class SimulationDriver:
         if p1id is not None and p2id is not None:
             self.players_list[p1id].second_player = self.players_list[p2id]
             self.players_list[p2id].second_player = self.players_list[p1id]
+
     def get_console_rental_fee(self):
         if self.time_stamp == 0:
             return 0

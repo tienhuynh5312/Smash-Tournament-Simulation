@@ -104,6 +104,7 @@ class Player:
             if self.playTime < 0:
                 self.after_match = True
                 self.is_playing = False
+                self.second_player = None
             print_debug(f"Player {self.player_id} is free")
         return self.busy_time > 0
 
