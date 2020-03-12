@@ -99,21 +99,6 @@ class Player:
 
         return False
 
-    def is_busy(self, duration=1, env=None):
-        self.busy_time = self.busy_time - duration
-        if self.busy_time > 0:
-            print_debug(f"Player {self.player_id} is busy/bathroom/late")
-        else:
-            if env is not None:
-                env.set_occupied(self.current_location, "players")
-
-            if self.playTime < 0:
-                self.after_match = True
-                self.is_playing = False
-                self.second_player = None
-            print_debug(f"Player {self.player_id} is free")
-        return self.busy_time > 0
-
     def walk(self, env):
         from simulationDriver import SimulationDriver
         import numpy as np
@@ -213,6 +198,7 @@ class Player:
         if random() < SimulationDriver.PLAYER_BATHROOM_PERCENT:
             self.take_break()
         if self.after_match:
+            self.after_match = False
             # walking method after a match
             if self.to_organizer < 0:  # to waiting area
                 location = get_random_location_waiting_area(env)
@@ -220,10 +206,11 @@ class Player:
             elif self.to_organizer >= 0:  # to organizer
                 self.take_off_after_report = True
                 self.set_destination(SimulationDriver.ORGANIZER_LOCATIONS[self.to_organizer])
-            self.after_match = False
+
         if self.is_recently_eliminated:
             location = get_random_location_waiting_area(env)
             self.set_destination(location)
+            self.is_recently_eliminated = False
 
         # - make the player walk toward the destination location
         for i in range(SimulationDriver.TIME_STEP):
@@ -302,6 +289,7 @@ class Player:
         self.match = match
         self.playTime = match.matchTime
         self.is_playing = True
+        self.is_recently_eliminated = False
 
     def report_match(self, OrganizerLocation):
         # Walk to the organizer
