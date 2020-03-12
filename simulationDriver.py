@@ -122,16 +122,6 @@ class SimulationDriver:
         # - TODO: Run the tournament
         index_plot = 0
         while True:
-            # - Increase timeStamp by timeStep
-            for pid in self.players_list.keys():
-                player = self.players_list[pid]
-                if player.destination_location is None:
-                    # player.set_destination(SimulationDriver.ORGANIZER_LOCATIONS[0])
-                    player.play_around()
-                else:
-                    self.environment.update()
-                    player.walk(self.environment)
-
             # - Call a pair of player to the reporting station
             # - If they are here:
             # -     Assign player to the consoles by location
@@ -146,9 +136,6 @@ class SimulationDriver:
 
             for pid in self.players_list.keys():
                 player = self.players_list[pid]
-                # if player.destination_location is None:
-                #     player.set_destination((35, 45))
-
                 player.walk(self.environment)
 
             # Organizer will call matches
@@ -156,30 +143,30 @@ class SimulationDriver:
                 p1id = self.Organizer.currentP1
                 p2id = self.Organizer.currentP2
                 self.__TalkToPlayers(p1id, p2id)
+            else:
+                # Run any available matches
+                openConsoles = np.where(self.CONSOLE_AVAILABILITY == True)[0]
+                if ((not self.bracket.nextMatches.empty()) and
+                        (not self.Organizer.is_busy()) and
+                        (len(openConsoles) > 0)):
+                    matchInfo = self.Organizer.callPlayers()
+                    isBye = matchInfo[0]
+                    match = matchInfo[1]
+                    consoleId = matchInfo[2]
+                    self.CONSOLE_AVAILABILITY[consoleId] = False
 
-            # Run any available matches
-            openConsoles = np.where(self.CONSOLE_AVAILABILITY == True)[0]
-            if ((not self.bracket.nextMatches.empty()) and
-                    (not self.Organizer.is_busy()) and
-                    (len(openConsoles) > 0)):
-                matchInfo = self.Organizer.callPlayers()
-                isBye = matchInfo[0]
-                match = matchInfo[1]
-                consoleId = matchInfo[2]
-                self.CONSOLE_AVAILABILITY[consoleId] = False
+                    # Case where the match is a bye (no one should be called)
+                    if isBye:
+                        self.Organizer.updateBracket(match, consoleId)
 
-                # Case where the match is a bye (no one should be called)
-                if isBye == True:
-                    self.Organizer.updateBracket(match, consoleId)
-
-                # Case where the match is playable and involves two real people
-                else:
-                    player1 = self.players_list[match.p1id]
-                    player2 = self.players_list[match.p2id]
-                    player1.set_destination(self.Organizer.current_location)
-                    player2.set_destination(self.Organizer.current_location)
-                    #self.Organizer.updateBracket(match, consoleId)
-            print(self.bracket.numAlive)
+                    # Case where the match is playable and involves two real people
+                    else:
+                        player1 = self.players_list[match.p1id]
+                        player2 = self.players_list[match.p2id]
+                        player1.set_destination(self.Organizer.current_location)
+                        player2.set_destination(self.Organizer.current_location)
+                        #self.Organizer.updateBracket(match, consoleId)
+                print(self.bracket.numAlive)
 
             # - Call a pair of player to the reporting station
             # - If they are here:
