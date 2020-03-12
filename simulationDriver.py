@@ -4,6 +4,7 @@ from player import Player
 from visualize import Visualize
 from reportingStation import ReportingStation
 from bracket import Bracket
+from Utility import print_debug
 
 import numpy as np
 
@@ -48,11 +49,15 @@ class SimulationDriver:
 
     # DOOR_LOCATIONS = [(WALL_ROW, 0), (WALL_ROW, 10), (WALL_ROW, 15)]
     DOOR_LOCATIONS = [(WALL_ROW, 20)]
-    ORGANIZER_LOCATIONS = [(10, 45)]
+    ORGANIZER_LOCATIONS = [(45, 45)]
 
-    CONSOLE_LOCATIONS = [(0, 1), (0, 5), (0, 23)]
     CONSOLE_LOCATIONS = {"horizontal": [(2, 5), (0, 23), (3,25)],
                          "vertical": [(0, 0), (5, 5), (5,40), (0,40), (10, 40), (17, 40)]}
+    CONSOLE_BY_ID = np.concatenate((np.array(CONSOLE_LOCATIONS["horizontal"]),
+                                   np.array(CONSOLE_LOCATIONS["vertical"])),
+                                   axis = 0)
+    CONSOLE_AVAILABILITY = np.ones(len(CONSOLE_BY_ID), dtype = bool)
+
     CONSOLE_HORIZONTAL_SIZE = (1, 3)  # console size when in horizontal size.
 
     PLAYER_SHOW_UP_LATE_PERCENT = 0.05
@@ -100,7 +105,7 @@ class SimulationDriver:
         self.data = []
 
         # TODO: Temporry single organizer
-        self.Organizer = ReportingStation(self.bracket, 1, SimulationDriver.ORGANIZER_LOCATIONS[0], 5)
+        self.Organizer = ReportingStation(self.bracket, 1, SimulationDriver.ORGANIZER_LOCATIONS[0], 9)
         print(self.environment.env["occupied"])
 
 
@@ -139,10 +144,6 @@ class SimulationDriver:
             # - if player.isRecentlyEliminated():
             #       player.playAround()
 
-            # snapshot
-            self.data.append((self.time_stamp, np.array(self.environment.env["players"])))
-            # - TODO: condition to end the outermost while loop
-            self.time_stamp = self.time_stamp + self.__time_step
             for pid in self.players_list.keys():
                 player = self.players_list[pid]
                 # if player.destination_location is None:
@@ -150,12 +151,22 @@ class SimulationDriver:
 
                 player.walk(self.environment)
 
+            # Organizer will call matches
+            if self.Organizer.isWaiting:
+                p1id = self.Organizer.currentP1
+                p2id = self.Organizer.currentP2
+                self.__TalkToPlayers(p1id, p2id)
+
             # Run any available matches
-            if (not self.bracket.nextMatches.empty()) & (not self.Organizer.is_busy()):
+            openConsoles = np.where(self.CONSOLE_AVAILABILITY == True)[0]
+            if ((not self.bracket.nextMatches.empty()) and
+                    (not self.Organizer.is_busy()) and
+                    (len(openConsoles) > 0)):
                 matchInfo = self.Organizer.callPlayers()
                 isBye = matchInfo[0]
                 match = matchInfo[1]
                 consoleId = matchInfo[2]
+                self.CONSOLE_AVAILABILITY[consoleId] = False
 
                 # Case where the match is a bye (no one should be called)
                 if isBye == True:
@@ -167,14 +178,8 @@ class SimulationDriver:
                     player2 = self.players_list[match.p2id]
                     player1.set_destination(self.Organizer.current_location)
                     player2.set_destination(self.Organizer.current_location)
-                    self.Organizer.updateBracket(match, consoleId)
+                    #self.Organizer.updateBracket(match, consoleId)
             print(self.bracket.numAlive)
-
-            # Organizer will call matches
-            if self.Organizer.isWaiting:
-                p1id = self.Organizer.currentP1
-                p2id = self.Organizer.currentP2
-                self.__TalkToPlayers(p1id, p2id)
 
             # - Call a pair of player to the reporting station
             # - If they are here:
@@ -189,9 +194,10 @@ class SimulationDriver:
             #       player.playAround()
 
             # snapshot
-            self.data.append((self.time_stamp, np.array(self.environment.env["occupied"])))
+            self.data.append((self.time_stamp, np.array(self.environment.env["players"])))
+            self.time_stamp = self.time_stamp + self.__time_step
             # - TODO: condition to end the outermost while loop
-            if self.time_stamp >= SimulationDriver.SIM_DURATION*2:
+            if self.time_stamp >= SimulationDriver.SIM_DURATION:
                 break
             if self.bracket.isOver():
                 return self.time_stamp
@@ -200,24 +206,26 @@ class SimulationDriver:
         return self.time_stamp
 
     def __TalkToPlayers(self, p1id, p2id):
+        print_debug(f"Tried Talking With {p1id} and  {p2id}")
         oLocation = np.array(self.Organizer.current_location)
+        match = self.Organizer.currentMatch
         if p1id is not None:
             player1 = self.players_list[p1id]
-            if player1.is_here():
+            if player1.is_here(radius=2):
                 self.Organizer.receivePlayer(p1id)
                 # Move player to the console and have them play their match
-                player1.set_destination(self.CONSOLE_LOCATIONS[self.Organizer.currentConsole])
+                player1.set_match(match, self.CONSOLE_BY_ID[self.Organizer.currentConsole])
                 # p1.set_match(self.Organizer.currentMatch, self.CONSOLE_LOCATIONS[self.Organizer.currentConsole])
-                print("wow!")
+                print_debug(f"Players {p1id} to console {self.Organizer.currentConsole}")
 
         if p2id is not None:
             player2 = self.players_list[p2id]
-            if player2.is_here():
+            if player2.is_here(radius=2):
                 self.Organizer.receivePlayer(p2id)
                 # Move player to the console and have them play their match
-                player2.set_destination(self.CONSOLE_LOCATIONS[self.Organizer.currentConsole])
+                player2.set_match(match, self.CONSOLE_BY_ID[self.Organizer.currentConsole])
                 #p2.set_destination(self.CONSOLE_LOCATIONS[self.Organizer.currentConsole])
-                print("wow")
+                print_debug(f"Player {p2id} to console {self.Organizer.currentConsole}")
 
     def get_console_rental_fee(self):
         if self.time_stamp == 0:
@@ -257,7 +265,7 @@ class SimulationDriver:
             x2 = x1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[1]
             y1 = console[1]
             y2 = y1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[0]
-            # #I f the console fits on the table
+            # If the console fits on the table
             # if np.all(self.environment.env["tables"][x1:x2, y1:y2]):
             #     self.environment.env["occupied"][x1:x2, y1:y2] = data
             #     self.environment.env["consoles"][x1:x2, y1:y2] = data
