@@ -168,6 +168,12 @@ class SimulationDriver:
                         #self.Organizer.updateBracket(match, consoleId)
                 print(self.bracket.numAlive)
 
+            # Organizer will call matches
+            if self.Organizer.is_waiting():
+                p1id = self.Organizer.currentP1
+                p2id = self.Organizer.currentP2
+                self.__TalkToPlayers(p1id, p2id)
+
             # - Call a pair of player to the reporting station
             # - If they are here:
             # -     Assign player to the consoles by location
