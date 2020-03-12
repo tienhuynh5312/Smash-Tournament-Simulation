@@ -208,21 +208,22 @@ class SimulationDriver:
     def __TalkToPlayers(self, p1id, p2id):
         print_debug(f"Tried Talking With {p1id} and  {p2id}")
         oLocation = np.array(self.Organizer.current_location)
+        match = self.Organizer.currentMatch
         if p1id is not None:
             player1 = self.players_list[p1id]
-            if player1.is_here():
+            if player1.is_here(radius=2):
                 self.Organizer.receivePlayer(p1id)
                 # Move player to the console and have them play their match
-                player1.set_destination(self.CONSOLE_BY_ID[self.Organizer.currentConsole])
+                player1.set_match(match, self.CONSOLE_BY_ID[self.Organizer.currentConsole])
                 # p1.set_match(self.Organizer.currentMatch, self.CONSOLE_LOCATIONS[self.Organizer.currentConsole])
                 print_debug(f"Players {p1id} to console {self.Organizer.currentConsole}")
 
         if p2id is not None:
             player2 = self.players_list[p2id]
-            if player2.is_here():
+            if player2.is_here(radius=2):
                 self.Organizer.receivePlayer(p2id)
                 # Move player to the console and have them play their match
-                player2.set_destination(self.CONSOLE_BY_ID[self.Organizer.currentConsole])
+                player2.set_match(match, self.CONSOLE_BY_ID[self.Organizer.currentConsole])
                 #p2.set_destination(self.CONSOLE_LOCATIONS[self.Organizer.currentConsole])
                 print_debug(f"Player {p2id} to console {self.Organizer.currentConsole}")
 

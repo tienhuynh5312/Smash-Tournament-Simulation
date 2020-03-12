@@ -47,15 +47,22 @@ class ReportingStation:
         # Checks to see if console + match is available
         openConsoles = np.where(self.consoles == True)[0]
         if (not self.bracket.nextMatches.empty()) and (len(openConsoles) > 0):
-            self.isWaiting = True
+
             matchIndex = self.bracket.nextMatches.get()[1]
             matchInfo = self.bracket.getMatch(matchIndex)
             console = openConsoles[0]
+
+            self.isWaiting = True
             self.consoles[console] = False
             self.currentConsole = console
             self.currentP1 = matchInfo.p1id
             self.currentP2 = matchInfo.p2id
+            self.currentMatch = matchInfo
+
             if (matchInfo.p2id == -1) or (matchInfo.p2id == -1):
+                self.currentP1 = None
+                self.currentP2 = None
+                self.isWaiting = False
                 return(True, matchInfo, console)
             else:
                 print("Wow match can be played")
