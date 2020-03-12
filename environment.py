@@ -18,8 +18,6 @@ class Environment:
 
         self.__players_array = np.zeros((m, n))
 
-        self.__tables_array = np.zeros((m, n))
-
         self.__wall_array = np.ones((m, n))
 
 
@@ -28,7 +26,6 @@ class Environment:
                     "organizers": self.__organizers_array,
                     "consoles": self.__consoles_array,
                     "players": self.__players_array,
-                    "tables": self.__tables_array,
                     "wall": self.__wall_array}
 
         self.__generate_wall()
@@ -52,9 +49,9 @@ class Environment:
     def __generate_consoles(self):
         """This method is migrated to simulationDriver instead."""
         from simulationDriver import SimulationDriver
+        import numpy as np
 
         def draw_console(size_tuple, horizontal=True):
-            import numpy as np
             if horizontal:
                 return np.ones(size_tuple)
             else:
@@ -75,6 +72,7 @@ class Environment:
             y1 = console[1]
             y2 = y1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[0]
             self.env["consoles"][x1:x2, y1:y2] = 1
+
 
     def update(self):
         import numpy as np

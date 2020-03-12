@@ -54,6 +54,19 @@ class Player:
         self.busy_time = busy_time
         print_debug(f"set player {self.player_id} busy for {self.busy_time}")
 
+    def is_busy(self, duration=1, env=None):
+        self.busy_time = self.busy_time - duration
+        if self.busy_time > 0:
+            print_debug(f"Player {self.player_id} is busy/bathroom/late")
+        else:
+            if env is not None:
+                env.set_occupied(self.current_location, "players")
+            if self.playTime < 0:
+                self.after_match = True
+                self.is_playing = False
+            print_debug(f"Player {self.player_id} is free")
+        return self.busy_time > 0
+
     def take_break(self, env=None):
         print_debug(f"Player {self.player_id} needs to take break")
         if self.is_busy(duration=0):
@@ -290,7 +303,6 @@ class Player:
         self.match = match
         self.playTime = match.matchTime
         self.is_playing = True
-        self.after_match = False
         self.is_in_a_match = True
 
     def report_match(self, OrganizerLocation):
