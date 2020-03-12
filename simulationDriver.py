@@ -49,7 +49,7 @@ class SimulationDriver:
     TOTAL_PLAYERS = 7
 
     # DOOR_LOCATIONS = [(WALL_ROW, 0), (WALL_ROW, 10), (WALL_ROW, 15)]
-    DOOR_LOCATIONS = [(WALL_ROW, 20)]
+    DOOR_LOCATIONS = [(WALL_ROW, 20), (WALL_ROW, 30), (WALL_ROW, 10)]
     ORGANIZER_LOCATIONS = [(45, 45)]
 
     CONSOLE_LOCATIONS = {"horizontal": [(2, 5), (4, 23), (6, 25)],
@@ -102,7 +102,7 @@ class SimulationDriver:
 
         # - TODO: place players
         self.__generate_players()
-        self.environment.update
+        self.environment.update()
         self.data = []
 
         # TODO: Temporary single organizer
@@ -182,7 +182,7 @@ class SimulationDriver:
             # snapshot
             self.data.append((self.time_stamp, np.array(self.environment.env["players"])))
             self.time_stamp = self.time_stamp + self.__time_step
-            # - TODO: condition to end the outermost while loop
+            # # - TODO: condition to end the outermost while loop
             if self.time_stamp >= SimulationDriver.SIM_DURATION:
                 break
             if self.bracket.isOver():
