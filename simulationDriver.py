@@ -198,19 +198,21 @@ class SimulationDriver:
         match = self.Organizer.currentMatch
         if p1id is not None:
             player1 = self.players_list[p1id]
-            if player1.is_here(radius=2):
+            if player1.is_here(radius=1):
                 self.Organizer.receivePlayer(p1id)
                 # Move player to the console and have them play their match
                 player1.set_match(match, self.CONSOLE_BY_ID[self.Organizer.currentConsole])
+                player1.to_organizer = 0
                 # p1.set_match(self.Organizer.currentMatch, self.CONSOLE_LOCATIONS[self.Organizer.currentConsole])
                 print_debug(f"Players {p1id} to console {self.Organizer.currentConsole}")
 
         if p2id is not None:
             player2 = self.players_list[p2id]
-            if player2.is_here(radius=2):
+            if player2.is_here(radius=1):
                 self.Organizer.receivePlayer(p2id)
                 # Move player to the console and have them play their match
                 player2.set_match(match, self.CONSOLE_BY_ID[self.Organizer.currentConsole])
+                player2.to_organizer = -1
                 #p2.set_destination(self.CONSOLE_LOCATIONS[self.Organizer.currentConsole])
                 print_debug(f"Player {p2id} to console {self.Organizer.currentConsole}")
 
