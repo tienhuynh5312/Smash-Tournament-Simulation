@@ -29,7 +29,7 @@ class Player:
         self.destination_location = None
         self.playTime = 0
         self.match = None
-        self.to_organizer = -1
+        self.to_organizer = 1
         self.after_match = False
         self.is_in_a_match = False
         self.bias = 0
