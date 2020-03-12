@@ -1,6 +1,6 @@
 # - Import modules
 from environment import Environment
-from Player import Player
+from player import Player
 from visualize import Visualize
 from reportingStation import ReportingStation
 from bracket import Bracket
