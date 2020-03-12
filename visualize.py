@@ -16,7 +16,7 @@ class Visualize:
         fig = plt.figure(figsize=(5, 5))
         shape = data_3d.shape
         combine = np.zeros((shape[1], shape[2]))
-        combine = env["consoles"]*2 + env["organizers"]*5 + env["wall"]
+        combine = env["consoles"]*2 + env["organizers"]*5 + env["wall"] + env["tables"]
         data1 = data_3d[0]*4 + combine
         ax = fig.add_axes((0, 0, 1, 1), frameon=False)
         img = ax.imshow(data1, interpolation='none',
@@ -25,7 +25,7 @@ class Visualize:
                         zorder=0)
 
         for i in range(len(data_3d)):
-            combine = env["consoles"]*2 + env["organizers"]*5 + env["wall"]
+            combine = env["consoles"]*2 + env["organizers"]*5 + env["wall"] + env["tables"]
             data1 = data_3d[i]*4 + combine
             img.set_data(data1)
             plt.draw()

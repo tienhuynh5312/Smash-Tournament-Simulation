@@ -29,8 +29,9 @@ class Player:
         self.destination_location = None
         self.playTime = 0
         self.match = None
-        self.to_organizer = None
+        self.to_organizer = 1
         self.after_match = False
+        self.is_in_a_match = False
         self.bias = 0
 
     def __del__(self):
@@ -58,7 +59,7 @@ class Player:
         else:
             if env is not None:
                 env.set_occupied(self.current_location, "players")
-            if self.is_playing:
+            if self.playTime < 0:
                 self.after_match = True
                 self.is_playing = False
             print_debug(f"Player {self.player_id} is free")
@@ -95,10 +96,12 @@ class Player:
         #             self.destination_index = self.destination_index + 1
         #         return True
         if to_door:
-            if abs(distance_row) <= 0 and abs(distance_col+2) <= 0:
+            if abs(distance_row) <= 0 and abs(distance_col) <= 2:
+                self.destination_location = None
                 return True
         else:
             if abs(distance_row) <= radius and abs(distance_col) <= radius:
+                self.destination_location = None
                 return True
 
         return False
@@ -154,7 +157,7 @@ class Player:
             row_location = self.current_location[0] + bias[0]
             col_location = self.current_location[1] + bias[1]
 
-            if direction_choice < 0.5+self.bias:
+            if direction_choice < 0.5 + self.bias:
                 # go vertical
                 if go_south:
                     row_location = row_location + 1
@@ -195,16 +198,21 @@ class Player:
                 return -0.25
             elif col_bias != 0:
                 return 0.25
-            
+            else:
+                return 0
+
+        if self.destination_location is None:
+            self.move_random()
+
         if random() < SimulationDriver.PLAYER_BATHROOM_PERCENT:
             self.take_break()
 
         if self.after_match:
             # walking method after a match
-            if self.to_organizer <= 0:  # to waiting area
+            if self.to_organizer < 0:  # to waiting area
                 location = get_random_location_waiting_area(env)
                 self.set_destination(location)
-            elif self.to_organizer > 0:  # to organizer
+            elif self.to_organizer >= 0:  # to organizer
                 self.set_destination(SimulationDriver.ORGANIZER_LOCATIONS[self.to_organizer])
             self.after_match = False
 
@@ -218,7 +226,7 @@ class Player:
                 print_debug(f"player id {self.player_id} is here at {self.destination_location}")
                 if self.playTime > 0:
                     self.set_busy_time(self.playTime)  # assign play time
-                    self.playTime = 0  # reset after assignment.
+                    self.playTime = -1  # reset after assignment.
                 break
 
             try_timeout = 1
@@ -280,6 +288,7 @@ class Player:
         self.match = match
         self.playTime = match.matchTime
         self.is_playing = True
+        self.is_in_a_match = True
 
     def report_match(self, OrganizerLocation):
         # Walk to the organizer
