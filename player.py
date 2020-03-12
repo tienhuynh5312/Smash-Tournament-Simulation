@@ -58,9 +58,11 @@ class Player:
         else:
             if env is not None:
                 env.set_occupied(self.current_location, "players")
-            if self.is_playing:
-                # self.after_match = True
-                self.is_playing = True
+
+            # if self.is_playing:
+            #     self.after_match = True
+            #     self.is_playing = False
+
             print_debug(f"Player {self.player_id} is free")
         return self.busy_time > 0
 
@@ -95,7 +97,7 @@ class Player:
         #             self.destination_index = self.destination_index + 1
         #         return True
         if to_door:
-            if abs(distance_row) <= 0 and abs(distance_col+2) <= 0:
+            if abs(distance_row) <= 0 and abs(distance_col) <= 2:
                 self.destination_location = None
                 return True
         else:
@@ -156,7 +158,7 @@ class Player:
             row_location = self.current_location[0] + bias[0]
             col_location = self.current_location[1] + bias[1]
 
-            if direction_choice < 0.5+self.bias:
+            if direction_choice < 0.5 + self.bias:
                 # go vertical
                 if go_south:
                     row_location = row_location + 1
@@ -197,6 +199,8 @@ class Player:
                 return -0.25
             elif col_bias != 0:
                 return 0.25
+            else:
+                return 0
 
         if self.destination_location is None:
             self.move_random()
@@ -206,10 +210,10 @@ class Player:
 
         if self.after_match:
             # walking method after a match
-            if self.to_organizer <= 0:  # to waiting area
+            if self.to_organizer < 0:  # to waiting area
                 location = get_random_location_waiting_area(env)
                 self.set_destination(location)
-            elif self.to_organizer > 0:  # to organizer
+            elif self.to_organizer >= 0:  # to organizer
                 self.set_destination(SimulationDriver.ORGANIZER_LOCATIONS[self.to_organizer])
             self.after_match = False
 
