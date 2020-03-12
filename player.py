@@ -31,9 +31,9 @@ class Player:
         self.match = None
         self.to_organizer = -1
         self.after_match = False
-        self.is_in_a_match = False
         self.second_player = None
         self.after_report = False
+        self.take_off_after_report = False
         self.bias = 0
 
     def __del__(self):
@@ -95,7 +95,6 @@ class Player:
                 return True
         else:
             if abs(distance_row) <= radius and abs(distance_col) <= radius:
-                self.destination_location = None
                 return True
 
         return False
@@ -213,17 +212,16 @@ class Player:
 
         if random() < SimulationDriver.PLAYER_BATHROOM_PERCENT:
             self.take_break()
-        elif self.destination_location is None:
-            self.move_random()
-        elif self.after_match:
+        if self.after_match:
             # walking method after a match
             if self.to_organizer < 0:  # to waiting area
                 location = get_random_location_waiting_area(env)
                 self.set_destination(location)
             elif self.to_organizer >= 0:  # to organizer
+                self.take_off_after_report = True
                 self.set_destination(SimulationDriver.ORGANIZER_LOCATIONS[self.to_organizer])
             self.after_match = False
-        elif self.is_recently_eliminated:
+        if self.is_recently_eliminated:
             location = get_random_location_waiting_area(env)
             self.set_destination(location)
 
@@ -239,10 +237,11 @@ class Player:
                         if self.second_player.is_here():
                             self.set_busy_time(self.playTime)  # assign play time
                             self.playTime = -1  # reset after assignment.
-                    if self.current_location in SimulationDriver.ORGANIZER_LOCATIONS:
+                    if self.take_off_after_report:
                         location = get_random_location_waiting_area(env)
                         self.set_destination(location)
-                    break
+                        self.take_off_after_report = False
+                    continue
 
                 try_timeout = 1
                 new_row_location, new_col_location = get_new_location(to_door=walk2door())
@@ -303,7 +302,6 @@ class Player:
         self.match = match
         self.playTime = match.matchTime
         self.is_playing = True
-        self.is_in_a_match = True
 
     def report_match(self, OrganizerLocation):
         # Walk to the organizer

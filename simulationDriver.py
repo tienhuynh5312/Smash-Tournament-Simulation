@@ -52,8 +52,8 @@ class SimulationDriver:
     DOOR_LOCATIONS = [(WALL_ROW, 20)]
     ORGANIZER_LOCATIONS = [(45, 45)]
 
-    CONSOLE_LOCATIONS = {"horizontal": [(2, 5), (0, 23), (3, 25)],
-                         "vertical": [(0, 0), (5, 5), (5, 40), (0, 40), (10, 40), (17, 40)]}
+    CONSOLE_LOCATIONS = {"horizontal": [(2, 5), (4, 23), (6, 25)],
+                         "vertical": [(1, 1), (5, 5), (5, 10), (0, 40), (10, 40), (17, 40)]}
     CONSOLE_BY_ID = np.concatenate((np.array(CONSOLE_LOCATIONS["horizontal"]),
                                     np.array(CONSOLE_LOCATIONS["vertical"])),
                                    axis=0)
@@ -215,6 +215,10 @@ class SimulationDriver:
                 # p2.set_destination(self.CONSOLE_LOCATIONS[self.Organizer.currentConsole])
                 print_debug(f"Player {p2id} to console {self.Organizer.currentConsole}")
 
+        if p1id is not None and p2id is not None:
+            self.players_list[p1id].second_player = self.players_list[p2id]
+            self.players_list[p2id].second_player = self.players_list[p1id]
+
     def get_console_rental_fee(self):
         if self.time_stamp == 0:
             return 0
@@ -262,7 +266,7 @@ class SimulationDriver:
         import numpy as np
         self.players_list = {}
         # - Set the location of the player randomly
-        row_min = SimulationDriver.WALL_ROW + 1
+        row_min = SimulationDriver.WALL_ROW + 5
         row_max = SimulationDriver.ALL_AREA_ROWS
         col_min = 0
         col_max = SimulationDriver.ALL_AREA_COLS
