@@ -144,10 +144,6 @@ class SimulationDriver:
             # - if player.isRecentlyEliminated():
             #       player.playAround()
 
-            # snapshot
-            self.data.append((self.time_stamp, np.array(self.environment.env["players"])))
-            # - TODO: condition to end the outermost while loop
-            self.time_stamp = self.time_stamp + self.__time_step
             for pid in self.players_list.keys():
                 player = self.players_list[pid]
                 # if player.destination_location is None:
@@ -198,9 +194,10 @@ class SimulationDriver:
             #       player.playAround()
 
             # snapshot
-            self.data.append((self.time_stamp, np.array(self.environment.env["occupied"])))
+            self.data.append((self.time_stamp, np.array(self.environment.env["players"])))
+            self.time_stamp = self.time_stamp + self.__time_step
             # - TODO: condition to end the outermost while loop
-            if self.time_stamp >= SimulationDriver.SIM_DURATION*2:
+            if self.time_stamp >= SimulationDriver.SIM_DURATION:
                 break
             if self.bracket.isOver():
                 return self.time_stamp
@@ -267,7 +264,7 @@ class SimulationDriver:
             x2 = x1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[1]
             y1 = console[1]
             y2 = y1 + SimulationDriver.CONSOLE_HORIZONTAL_SIZE[0]
-            # #I f the console fits on the table
+            # If the console fits on the table
             # if np.all(self.environment.env["tables"][x1:x2, y1:y2]):
             #     self.environment.env["occupied"][x1:x2, y1:y2] = data
             #     self.environment.env["consoles"][x1:x2, y1:y2] = data
