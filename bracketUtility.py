@@ -22,7 +22,7 @@ class delayedUpdate:
     def getLoserData(self):
         return ([self.lp, self.loser])
 
-def runBracket(numPlayers, numConsoles):
+def runBracket(numPlayers, numConsoles, timeoutMode):
     # Time is measured in seconds
     totalTime = 0
     CurrOpen = numConsoles
@@ -53,6 +53,8 @@ def runBracket(numPlayers, numConsoles):
 
             else:
                 currMatch = delayedUpdate(totalTime, match.matchTime, winner, loser, wp, lp)
+                if (winner == 1) and (timeoutMode):
+                    currMatch = delayedUpdate(totalTime, 7 * 60, winner, loser, wp, lp)
                 ongoingMatches.append(currMatch)
 
         for ongoingMatch in ongoingMatches:
@@ -64,5 +66,6 @@ def runBracket(numPlayers, numConsoles):
                 test.updatePlayer(wData[0], wData[1])
                 test.updatePlayer(lData[0], lData[1])
 
-    print(str(totalTime/ 60) + " minutes")
-    return (totalTime / 60)
+    #print(str(totalTime / 3600) + " hours")
+    return (totalTime / 3600)
+
