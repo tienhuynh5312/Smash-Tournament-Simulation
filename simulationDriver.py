@@ -5,6 +5,7 @@ from visualize import Visualize
 from reportingStation import ReportingStation
 from bracket import Bracket
 from Utility import print_debug
+from Console import Console 
 
 import numpy as np
 

@@ -5,6 +5,7 @@ import numpy as np
 
 class Match(object):
     def __init__(self,wpath = None, lpath = None, p1 = None, p2 = None, isB05 = False):
+        self.playersTalk = False
         self.p1id = p1
         self.p2id = p2
         self.p1Wins = 0
@@ -73,21 +74,41 @@ class Match(object):
     # Returns the amount of time the match takes
     def generateTime(self):
         sum = 0
-        # Checking for controls
+        # Time for player 1 to check for controls
+        sum += np.random.uniform(14.230769230769, 9.0383797050305)
+
+        # Time for player 2 to check for controls
+        sum += np.random.uniform(14.230769230769, 9.0383797050305)
+
+        # Time for player 1 to input controls if they are missing
         if np.random.uniform(0, 1) < .5:
-            sum += 20
-        # Setup Controls
+            sum += np.random.uniform(33, 20.621590627301)
+
+        # Time for player 2 to input controls if they are missing
         if np.random.uniform(0, 1) < .5:
-            sum += 30
+            sum += np.random.normal(33, 20.621590627301)
+
+        # Deciding the first stage of the match to play on
         if np.random.uniform(0, 1) < .5:
-            sum += 30
+            sum += np.random.normal(14.230769230769, 9.0383797050305)
+
+        if (np.random.uniform(0, 1) < .6) and (self.playersTalk):
+            sum += np.random.normal(14.230769230769, 9.0383797050305)
         timeTalking = np.random.binomial(4, .5)
         sum += timeTalking
+
         # The amount of time playing the games took
         while not self.isComplete():
+
+            # The amount of time it takes to play one game
             sum += self.__playMatch()
+            if not self.isComplete():
+
+                # The amount of time it takes to setup the next game
+                sum += np.random.normal(48.125, 21.033561616752)
+
         # Packing up controllers
-        controllerTime = np.random.binomial(4, .5)
+        controllerTime = np.random.normal(48.555555555556, 52.737821132256)
         sum = sum + controllerTime
         self.matchTime = sum
         return sum
@@ -101,7 +122,7 @@ class Match(object):
     # Updates the result of the match
     # Returns the amount of time the match took
     def __playMatch(self):
-        matchTime = np.random.binomial(4, .5)
+        matchTime = np.random.normal(224.44444444444, 58.118652580542)
         if np.random.uniform(0, 1) < .5:
             self.__updateResult(1)
         else:
