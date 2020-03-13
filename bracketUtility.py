@@ -54,7 +54,7 @@ def runBracket(numPlayers, numConsoles, timeoutMode):
             else:
                 currMatch = delayedUpdate(totalTime, match.matchTime, winner, loser, wp, lp)
                 if (winner == 1) and (timeoutMode):
-                    currMatch = delayedUpdate(totalTime, 7 * 60, winner, loser, wp, lp)
+                    currMatch = delayedUpdate(totalTime, 3 * 7 * 60 + 5, winner, loser, wp, lp)
                 ongoingMatches.append(currMatch)
 
         for ongoingMatch in ongoingMatches:
