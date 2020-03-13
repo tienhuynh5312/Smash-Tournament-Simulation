@@ -89,9 +89,6 @@ class SimulationDriver:
         self.__generate_environment()
         self.env = self.environment.env
 
-        # - Create Bracket for the tournament
-        self.bracket = Bracket(SimulationDriver.TOTAL_PLAYERS, 2)
-
         # - TODO: place consoles
         self.__generate_console_configuration()
 
@@ -102,13 +99,16 @@ class SimulationDriver:
         self.__generate_obstacles()
 
         # - TODO: place players
+        self.players_list = {}
         self.__generate_players()
         self.environment.update()
         self.data = []
 
         # TODO: Temporary single organizer
-        self.Organizer = ReportingStation(self.bracket, 1, SimulationDriver.ORGANIZER_LOCATIONS[0], 9)
-        print(self.environment.env["occupied"])
+        # - Create Bracket for the tournament
+        self.bracket = Bracket(SimulationDriver.TOTAL_PLAYERS, 2)
+        self.Organizer = ReportingStation(self.bracket, 0, SimulationDriver.ORGANIZER_LOCATIONS[0], 9)
+
 
     def begin(self, visual=False):
         """Begin the simulation"""
@@ -265,7 +265,6 @@ class SimulationDriver:
 
     def __generate_players(self):
         import numpy as np
-        self.players_list = {}
         # - Set the location of the player randomly
         row_min = SimulationDriver.WALL_ROW + 5
         row_max = SimulationDriver.ALL_AREA_ROWS

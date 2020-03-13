@@ -17,7 +17,7 @@ def test_1():
 
 
 def test_2():
-    SimulationDriver.TOTAL_PLAYERS = 30
+    SimulationDriver.TOTAL_PLAYERS = 6
     SimulationDriver.SIM_DURATION = 2000
     x = SimulationDriver()
     visualize = False
