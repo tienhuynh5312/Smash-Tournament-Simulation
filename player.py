@@ -195,25 +195,27 @@ class Player:
             else:
                 return 0
 
-        if random() < SimulationDriver.PLAYER_BATHROOM_PERCENT:
-            self.take_break()
-        if self.after_match:
-            self.after_match = False
-            # walking method after a match
-            if self.to_organizer < 0:  # to waiting area
-                location = get_random_location_waiting_area(env)
-                self.set_destination(location)
-            elif self.to_organizer >= 0:  # to organizer
-                self.take_off_after_report = True
-                self.set_destination(SimulationDriver.ORGANIZER_LOCATIONS[self.to_organizer])
 
-        if self.is_recently_eliminated:
-            location = get_random_location_waiting_area(env)
-            self.set_destination(location)
-            self.is_recently_eliminated = False
 
         # - make the player walk toward the destination location
         for i in range(SimulationDriver.TIME_STEP):
+            if random() < SimulationDriver.PLAYER_BATHROOM_PERCENT:
+                self.take_break()
+            if self.after_match:
+                self.after_match = False
+                # walking method after a match
+                if self.to_organizer < 0:  # to waiting area
+                    location = get_random_location_waiting_area(env)
+                    self.set_destination(location)
+                elif self.to_organizer >= 0:  # to organizer
+                    self.take_off_after_report = True
+                    self.set_destination(SimulationDriver.ORGANIZER_LOCATIONS[self.to_organizer])
+
+            if self.is_recently_eliminated:
+                location = get_random_location_waiting_area(env)
+                self.set_destination(location)
+                self.is_recently_eliminated = False
+
             if self.is_busy(env=env):
                 print_debug(f"Can't walk.")
                 continue
