@@ -7,6 +7,7 @@ from bracket import Bracket
 from reportingStation import ReportingStation
 import numpy as np
 import sys
+from Utility import print_debug
 
 np.set_printoptions(threshold=sys.maxsize)
 
@@ -53,7 +54,8 @@ def test_5():
         test.nextMatches
         print(matchId)
         match = test.getMatch(matchId)
-        sum = sum + match.generateTime()
+        sum = sum + match.matchTime
+        print("Match time" + str(match.matchTime))
         winner = match.getWinner()
         loser = match.getLoser()
         wp = match.getwpath()
@@ -61,7 +63,7 @@ def test_5():
         test.updatePlayer(wp, winner)
         test.updatePlayer(lp, loser)
     print(test.numAlive)
-    # assert test.isOver() is True, "Test Passed"
+    assert test.isOver() is True, "Test Passed"
 
 # Test cases for the Reporting Station Class
 def test_6():

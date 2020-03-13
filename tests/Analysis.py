@@ -1,20 +1,27 @@
-import pytest
-
-from simulationDriver import SimulationDriver
-from environment import Environment
-from player import Player
-from bracket import Bracket
-from reportingStation import ReportingStation
+import bracketUtility
 import numpy as np
-import sys
+import matplotlib.pyplot as plt
 
-np.set_printoptions(threshold=sys.maxsize)
-
-
+# Runs brackets with varying number of players and calculates the average amount
+# of time each tournament takes with the number of consoles set to 4
 def Analysis_1():
-    assert 1 + 1 == 2, "Test Passed"
+    NumConsoles = 4
+    numPlayers = np.zeros(125)
+    averageTimes = np.zeros(125)
+    for i in range(3, 128):
+        sum = 0
+        print(i)
+        for j in range(10):
+            time = bracketUtility.runBracket(i, NumConsoles)
+            sum = sum + time
+        average = (sum / 10)
+        numPlayers[i - 3] = i
+        averageTimes[i - 3] = average
 
-def Analysis_2():
+    plt.plot(numPlayers, averageTimes)
+    plt.xlabel("Number of Entrants")
+    plt.ylabel("Tournament Runtime (mins)")
+    plt.title("Tournament runtime vs numEntrants")
+    plt.show()
 
-def Analysis_3():
-
+Analysis_1()
