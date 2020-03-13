@@ -107,7 +107,7 @@ class SimulationDriver:
         # TODO: Temporary single organizer
         # - Create Bracket for the tournament
         self.bracket = Bracket(SimulationDriver.TOTAL_PLAYERS, 2)
-        self.Organizer = ReportingStation(self.bracket, 0, SimulationDriver.ORGANIZER_LOCATIONS[0], 9)
+        self.Organizer = ReportingStation(self.bracket, 1, SimulationDriver.ORGANIZER_LOCATIONS[0], 9)
 
 
     def begin(self, visual=False):

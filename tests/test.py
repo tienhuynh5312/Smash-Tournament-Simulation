@@ -20,7 +20,7 @@ def test_2():
     SimulationDriver.TOTAL_PLAYERS = 6
     SimulationDriver.SIM_DURATION = 2000
     x = SimulationDriver()
-    visualize = False
+    visualize = True
     time = x.begin(visualize)
 
     print(time)
