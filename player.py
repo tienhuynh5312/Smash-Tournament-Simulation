@@ -232,7 +232,7 @@ class Player:
                         self.take_off_after_report = False
                     continue
 
-                try_timeout = 1
+                try_timeout = 4
                 new_row_location, new_col_location = get_new_location(to_door=walk2door())
                 while env.env["occupied"][(new_row_location, new_col_location)] > 0:
                     try_timeout = try_timeout - 1
